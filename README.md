@@ -1,161 +1,130 @@
-# GuaranIA
+# GuaranIA / PyFis IA
 
-PWA educativa **mobile-first** para enseñar **Física de 3.º curso** (Movimiento Parabólico) mediante aprendizaje interactivo, con **funcionamiento offline** para todo el contenido estático.
+PWA educativa para aprender Física de 3.º curso con ejercicios, simulaciones ligadas a cada problema, tutor en Jopara, práctica sin conexión y herramientas para docentes.
 
-## Qué es GuaranIA
+## Sistema Visual y Rebranding (GuaranIA)
 
-GuaranIA es una aplicación web progresiva que funciona en el navegador del estudiante sin necesidad de Internet: incluye un simulador 2D, tarjetas de estudio, un aula con conceptos y glosario, un tutor offline por reglas y un sistema de **Nivel de Confianza** que registra el progreso en el dispositivo.
+La interfaz utiliza un sistema de diseño educativo y tecnológico moderno:
+- **Base Navy (`--navy-base`, `--text-primary`):** Alto contraste, lectura sobria y profesional.
+- **Azul Tecnológico (`--brand-blue`):** Identidad central de la plataforma, botones primarios y enfoque interactivo.
+- **Violeta Innovación (`--brand-violet`):** Acento para el tutor Jopara y capacidades de IA.
+- **Ámbar de Acción (`--action-amber`):** Destacados, progreso Mbarete XP y elementos pedagógicos de atención.
+- **Coral Constructivo (`--danger-coral`):** Retroalimentación de error no punitiva y alertas cálidas.
+- **Proyector de Aula de Alto Impacto:** Tipografía ampliada, métricas físicas nítidas y presets pedagógicos interactivos (30°, 45°, 60°, 20°) legibles a distancia.
+- **Microanimaciones y Rendimiento:** Transiciones suaves (240ms pantallas, 500ms confianza), cero dependencias pesadas de animación y soporte total para `prefers-reduced-motion`.
 
-## Problema que resuelve
+## Contenido principal
 
-En contextos con conectividad limitada o intermitente, las herramientas educativas dependientes de la nube dejan de funcionar. GuaranIA garantiza que el estudiante pueda practicar Física **aunque no haya conexión**, con todo el contenido y el progreso guardados localmente.
+El único tema educativo de la app es **Movimiento Parabólico**, con tres situaciones que comparten el mismo motor físico:
 
-## Objetivo del MVP
+- **Dron:** entregas con salida y llegada a la misma altura.
+- **Básquetbol:** lanzamientos a la canasta.
+- **Pelota sobre un paredón:** tiro que debe superar un obstáculo.
 
-Este primer commit construye la **base limpia, modular y extensible** sobre la cual se conectará después un modelo de IA local. El MVP ya permite:
+Velocidad, gravedad, vectores y ángulo de lanzamiento se explican como apoyo conceptual para entender el movimiento parabólico, no como temas propios.
 
-- Ver la pantalla principal con cabecera, ConfidenceBar, tres pestañas y tutor.
-- Cambiar entre **Simulador**, **Tarjetas** y **Aula**.
-- Consultar ejercicios de Movimiento Parabólico con pistas progresivas offline.
-- Usar flashcards con giro y consolidación.
-- Aumentar el Nivel de Confianza (nunca disminuye).
-- Recargar la página y **conservar el progreso** (localStorage).
+## Funciones disponibles
 
-**Aún no incluye** (deliberadamente): modelo de IA local, entrenamiento/fine-tuning, API externa, login, base de datos, backend, APK ni modo docente completo.
+### Para estudiantes
 
-## Arquitectura
+- Registro e inicio de sesión local como alumno.
+- Tutorial inicial con tarjetas que explican el funcionamiento.
+- Ejercicios de dificultad básica, intermedia y avanzada.
+- Respuestas numéricas comprobadas por un motor determinista.
+- Simulación visual que cambia según el ejercicio activo.
+- Diagnóstico específico de errores y reintentos sin penalización.
+- Pistas progresivas en el tutor, con apoyo en castellano y Jopara.
+- Cuestionario conceptual y conversación libre con fallback sin conexión.
+- Flashcards, progreso, precisión, tiempo medio y recomendaciones adaptativas.
+- Acceso a una clase mediante código compartido por el docente.
 
-La aplicación separa tres capas que nunca se mezclan:
+### Para docentes
 
-```
-Física (physics/)      → cálculo determinista. La IA jamás decide si una respuesta es correcta.
-Pedagogy (pedagogy/)   → confianza, pistas y estado de aprendizaje.
-IA (ai/)               → abstracción AIProvider para conectar un modelo local después.
-```
+- Registro e inicio de sesión local como maestro.
+- Selección de temas, cantidad de tarjetas y cantidad de ejercicios.
+- Generación de un código de clase que se interpreta sin base de datos.
+- Vista de configuración aplicada.
+- Proyector de trayectorias con vista previa del ejercicio antes de mostrarlo a la clase.
+- Generación de una ficha PDF imprimible y disponible sin conexión.
 
-Flujo de datos:
+### Minijuego
 
-```
-UI (components/, simulator/)
-   ↓ consume
-hooks (useOfflineStorage, useTutor, useMission)
-   ↓ consume
-pedagogy/ + ai/ + physics/
-   ↓ usa
-data/ (JSON) + utils/ (storage)
-```
+- "Predecí y lanzá": el alumno estima el resultado (alcance o ángulo) antes de ver la simulación, compara su predicción con el resultado real y puede reintentar. Usa el mismo motor físico que el resto de la app.
 
-### Arquitectura de IA futura
+## Tutor e IA
 
-```
-AIProvider (interfaz conceptual: respond(context))
-   ├── RuleTutorProvider  → tutor 100% offline por reglas (activo hoy)
-   └── LocalAIProvider    → preparado para un modelo local (inactivo hoy)
-```
+La aplicación separa la validación de Física de la redacción del tutor:
 
-- Los componentes **nunca importan librerías de modelos directamente**: solo consumen `createAIProvider()` (`src/ai/AIProvider.js`).
-- En el futuro se conectará un modelo local (por ejemplo, **Transformers.js** u otro runtime de navegador) implementándolo **dentro de `LocalAIProvider`**, sin modificar el resto de la aplicación.
-- `src/ai/prompt.js` ya contiene el prompt del sistema y el constructor de prompts para el futuro modelo.
-- El modelo local, cuando se conecte, **nunca validará resultados numéricos**: eso sigue siendo responsabilidad de `physics/physicsValidator.js` (cálculo físico determinista).
-
-## Estructura de carpetas
-
-```
-src/
-├── assets/                  # Recursos estáticos (reservado)
-├── data/                    # Contenido educativo en JSON
-│   ├── exercises.json       # Ejercicios de Movimiento Parabólico
-│   ├── flashcards.json      # Tarjetas de estudio
-│   ├── tutor_jopara.json    # Saludos y pistas jopara del tutor (BORRADOR: requiere revisión lingüística)
-│   ├── concepts.json        # Definiciones de conceptos
-│   ├── errors.json          # Errores frecuentes
-│   └── glossary.json        # Glosario
-├── ai/                      # Capa de IA (abstracción)
-│   ├── AIProvider.js        # Interfaz + fábrica createAIProvider()
-│   ├── RuleTutorProvider.js # Tutor offline por reglas (activo)
-│   ├── LocalAIProvider.js   # Stub preparado para modelo local (inactivo)
-│   └── prompt.js            # Prompts para el futuro modelo
-├── physics/                 # Motor físico (separado de la IA)
-│   ├── projectileMotion.js  # Lanzamiento, trayectoria, altura, alcance
-│   ├── formulas.js          # Ecuaciones estándar del movimiento parabólico
-│   └── physicsValidator.js  # Comparación determinista de respuestas
-├── pedagogy/                # Capa pedagógica
-│   ├── hintEngine.js        # Pistas progresivas
-│   ├── confidenceEngine.js  # Nivel de Confianza (0-100, nunca disminuye)
-│   └── learningState.js     # Estado de aprendizaje persistido
-├── simulator/               # Simulador 2D (Canvas)
-│   ├── CanvasSimulator.jsx  # Canvas con placeholders y TODOs
-│   ├── projectileRenderer.js# Funciones de dibujo
-│   └── trajectory.js        # Mapeo físico → coordenadas de canvas
-├── components/              # Componentes de UI
-│   ├── Header.jsx           # Cabecera + badge "100% OFFLINE"
-│   ├── ConfidenceBar.jsx    # Barra de Nivel de Confianza
-│   ├── TabNavigation.jsx    # Pestañas Simulador / Tarjetas / Aula
-│   ├── TutorCard.jsx        # Tutor con mensaje castellano + jopara
-│   ├── ExerciseCard.jsx     # Ejercicio con pistas y comprobación
-│   ├── Flashcard.jsx        # Tarjeta con giro y consolidación
-│   ├── TeacherMode.jsx      # Modo docente (placeholder)
-│   └── PdfButton.jsx        # Ficha Aula PDF (placeholder)
-├── hooks/
-│   ├── useOfflineStorage.js # Persistencia (confianza, ejercicio, intentos, flashcards)
-│   ├── useTutor.js          # Consume AIProvider y expone ask()
-│   └── useMission.js        # Misión actual y navegación entre ejercicios
-├── utils/
-│   ├── storage.js           # localStorage seguro (con fallback en memoria)
-│   ├── units.js             # Conversiones de unidades (km/h ↔ m/s) y formato
-│   └── validation.js        # Validaciones genéricas reutilizables
-├── App.jsx                  # Composición de la pantalla principal
-├── main.jsx                 # Entry point + registro del service worker
-└── index.css                # Design tokens + estilos mobile-first
+```text
+Motor de Física        -> calcula y valida respuestas numéricas
+Tutor por reglas       -> responde inmediatamente sin conexión
+Proveedor de IA        -> mejora la conversación cuando /api/chat está disponible
 ```
 
-> Nota: `src/data/tutor_jopara.json` contiene textos en jopara que son un **borrador inicial no validado lingüísticamente**; deben ser revisados por el responsable lingüístico antes de usarse con estudiantes.
+El proveedor online incluye:
 
-## Cómo ejecutar
+- límite total de 3,5 segundos;
+- reintentos breves con espera exponencial;
+- recepción por streaming;
+- sanitización del texto;
+- fallback automático al tutor por reglas;
+- punto de extensión para un futuro modelo local en el navegador.
+
+La clave de Gemini se lee desde el servidor de desarrollo o vista previa y nunca se incluye en el bundle. Para una publicación en alojamiento estático se debe desplegar `/api/chat` como función de servidor o mantener solo el tutor por reglas.
+
+## Uso sin conexión
+
+Después de la primera carga, el service worker guarda la interfaz, los contenidos y los recursos estáticos. El tutor por reglas, las simulaciones, los ejercicios, las flashcards, el PDF y el progreso local siguen disponibles sin Internet.
+
+Las cuentas, sesiones, códigos de clase y progreso se guardan en el navegador de cada dispositivo. No existe sincronización remota entre dispositivos.
+
+## Instalación y ejecución
 
 ```bash
 npm install
 npm run dev
 ```
 
-Abrí la URL que muestra Vite (por defecto `http://localhost:5173`).
+Para usar el tutor online, copiar `.env.example` a `.env` y configurar una clave válida:
 
-Otros comandos:
-
-```bash
-npm test        # pruebas con node:test (sin dependencias extra)
-npm run build   # producción con PWA (service worker + manifest)
-npm run preview # servir la build de producción
+```text
+GEMINI_API_KEY=...
+GEMINI_MODEL=...
 ```
 
-## Cómo funciona el modo offline
+La app puede funcionar sin esas variables mediante el tutor offline.
 
-- `vite-plugin-pwa` genera un **service worker** que cachea todos los recursos estáticos (JS, CSS, HTML, iconos, manifest) con actualización automática.
-- El contenido educativo (JSON) se incluye en el bundle, por lo que también está disponible sin conexión.
-- El progreso (confianza, ejercicio actual, intentos, estado de flashcards) se guarda en **localStorage** a través de `src/utils/storage.js`, que tiene un fallback en memoria si localStorage no está disponible.
-- En este primer commit, "offline" significa: **interfaz, ejercicios, JSON, tutor de reglas, simulador, flashcards y progreso**. La IA generativa local todavía no forma parte de la aplicación.
+## Verificación
 
-### Nivel de Confianza
+```bash
+npm test
+npm run build
+npm run preview
+```
 
-- Rango de 0 a 100; **nunca disminuye** (no existe `decreaseConfidence()`).
-- Solo acepta incrementos positivos.
-- Recompensas: ejercicio correcto sin ayuda **+25**, con pistas **+15**, tarjeta consolidada **+5** (solo la primera vez por tarjeta), error **+0**.
+La suite actual cubre cuentas y roles, motor físico, contenido, códigos de clase, simulaciones, progresión, fallback, reintentos, streaming y servidor, todo sobre movimiento parabólico.
 
-### Diferencia entre RuleTutorProvider y LocalAIProvider
+## Estructura principal
 
-| | `RuleTutorProvider` | `LocalAIProvider` |
-|---|---|---|
-| Estado | **Activo**: la app funciona completamente con él | **Inactivo**: stub que responde "módulo en desarrollo" |
-| Cómo responde | Reglas + JSON local (errores frecuentes → pistas jopara) | Delegaría en un modelo local (Transformers.js u otro) |
-| Conexión | 100% offline, sin red | Sin red, pero requiere cargar el modelo en el navegador |
-| Cuándo usarlo | Hoy, siempre | Cuando se implemente el modelo local en un próximo commit |
+```text
+src/
+├── ai/          Tutor por reglas, proveedor online y banco conceptual
+├── auth/        Cuentas y sesiones locales
+├── components/  Interfaz de alumno, maestro, onboarding y PDF
+├── data/        Ejercicios, conceptos, errores, glosario y flashcards
+├── pedagogy/    Progreso, diagnóstico y recomendaciones
+├── physics/     Cálculo y validación determinista
+├── simulator/   Escenas y modelos visuales por ejercicio
+└── utils/       Persistencia, códigos de clase y validaciones
+```
 
-## Próximos pasos
+## Pendientes antes de la competencia
 
-1. Simulador completo: controles de lanzamiento (v0, ángulo), animación con `requestAnimationFrame`, trayectoria real dibujada y comparación con el objetivo.
-2. Conexión del modelo de IA local dentro de `LocalAIProvider` usando `src/ai/prompt.js`, sin modificar el resto de la aplicación.
-3. Generación real de la **Ficha Aula PDF** (`PdfButton`).
-4. Modo docente completo (`TeacherMode`).
-5. Revisión lingüística de los textos jopara por el responsable correspondiente.
-6. Repetición espaciada para las flashcards.
-7. Más ejercicios y temas del programa de Física de 3.º curso.
+- Validación lingüística de todos los textos en Jopara por una persona competente.
+- Revisión y aprobación del contenido por un docente de Física.
+- Matriz de trazabilidad con las fuentes del programa MEC: se buscó un programa oficial de Física de 3.º curso publicado en mec.gov.py y no se encontró un documento puntual sobre movimiento parabólico verificable en línea; falta que el equipo aporte la fuente oficial exacta (ver `src/data/contentReviewStatus.json`).
+- Endpoint `/api/chat` desplegable si se presenta la IA generativa online (hoy depende del servidor de desarrollo/vista previa de Vite; no está pensado para tocarse en esta etapa).
+- Pruebas de instalación y modo avión en teléfonos reales.
+- Pitch, guion de demostración, evidencia de colaboración y plan de continuidad.
+
+La evaluación detallada de preparación y fusión se encuentra en `EVALUACION_FUSION.md`.

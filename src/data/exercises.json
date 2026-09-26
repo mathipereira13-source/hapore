@@ -2,46 +2,277 @@
   {
     "id": "ej-01",
     "topic": "Movimiento Parabólico",
+    "scenario": "dron",
     "difficulty": "básico",
-    "question": "Un dron despega con velocidad inicial de 20 m/s y ángulo de 30° sobre la horizontal. ¿Cuánto vale la componente horizontal de la velocidad?",
+    "question": "Un dron despega con v0 = 20 m/s y ángulo de 30° sobre la horizontal para hacer una entrega. ¿Cuánto vale la componente horizontal (vx) de la velocidad?",
+    "questionJopara": "Peteĩ dron osẽ v0 = 20 m/s ha ángulo 30°-pe horizontal ári peteĩ entrega g̃uarã. ¿Mboýpa vale pe componente horizontal (vx)?",
     "values": { "v0": 20, "angle": 30, "gravity": 9.8 },
     "expectedConcept": "componente-horizontal",
     "correctAnswer": 17.32,
     "unit": "m/s",
+    "tolerance": 0.01,
+    "targetX": 34.64,
+    "targetY": 0,
     "hints": [
-      "La componente horizontal no depende de la gravedad y no cambia durante el vuelo.",
-      "La componente horizontal se calcula con el coseno: vx = v0 · cos(θ).",
-      "vx = 20 · cos(30°) ≈ 20 · 0,866. Hacé la cuenta y redondeá a 2 decimales."
+      "¿Qué dos direcciones tiene el movimiento? Pe dron oho yvate ha tenonde al mismo tiempo.",
+      "La velocidad se separa en dos partes: horizontal con coseno, vertical con seno. Acá pedimos solo la horizontal.",
+      "vx = v0 * cos(ángulo).",
+      "vx = 20 * cos(30°) ≈ 20 * 0,8660 = 17,32 m/s."
     ]
   },
   {
     "id": "ej-02",
     "topic": "Movimiento Parabólico",
+    "scenario": "dron",
     "difficulty": "básico",
-    "question": "El mismo dron se lanza con 20 m/s y 30° sobre la horizontal. ¿Cuánto vale la componente vertical de la velocidad inicial?",
+    "question": "El mismo dron despega con v0 = 20 m/s y 30° sobre la horizontal. ¿Cuánto vale la componente vertical inicial (vy)?",
+    "questionJopara": "Pe dron osẽ v0 = 20 m/s ha 30° horizontal ári. ¿Mboýpa vale pe componente vertical inicial (vy)?",
     "values": { "v0": 20, "angle": 30, "gravity": 9.8 },
     "expectedConcept": "componente-vertical",
     "correctAnswer": 10,
     "unit": "m/s",
+    "tolerance": 0.01,
+    "targetX": 34.64,
+    "targetY": 0,
     "hints": [
-      "En el instante inicial la componente vertical solo depende del ángulo de lanzamiento.",
-      "La componente vertical se calcula con el seno: vy = v0 · sen(θ).",
-      "vy = 20 · sen(30°) = 20 · 0,5."
+      "La velocidad vertical es el impulso que hace subir al dron antes de que la gravedad lo frene.",
+      "Para la parte vertical se usa el seno del ángulo, no el coseno.",
+      "vy = v0 * sen(ángulo).",
+      "vy = 20 * sen(30°) = 20 * 0,5 = 10 m/s."
     ]
   },
   {
     "id": "ej-03",
     "topic": "Movimiento Parabólico",
+    "scenario": "dron",
     "difficulty": "intermedio",
-    "question": "Se lanza un proyectil con velocidad inicial de 19,6 m/s y ángulo de 45°. ¿Cuál es su altura máxima?",
+    "question": "Se lanza un dron con v0 = 19,6 m/s y ángulo de 45° con g = 9,8 m/s². ¿Cuál es su altura máxima?",
+    "questionJopara": "Oñemombo peteĩ dron v0 = 19,6 m/s ha ángulo 45°-pe, g = 9,8 m/s² reheve. ¿Mboýpa pe altura máxima?",
     "values": { "v0": 19.6, "angle": 45, "gravity": 9.8 },
     "expectedConcept": "altura-maxima",
     "correctAnswer": 9.8,
     "unit": "m",
+    "tolerance": 0.01,
+    "targetX": 39.2,
+    "targetY": 0,
     "hints": [
-      "En la altura máxima la velocidad vertical vale cero.",
-      "Altura máxima: h = v0² · sen²(θ) / (2g).",
-      "h = (19,6² · sen²(45°)) / (2 · 9,8) = (384,16 · 0,5) / 19,6."
+      "En el punto más alto la velocidad vertical llega a cero por un instante.",
+      "La altura máxima depende de la componente vertical al cuadrado, no del tiempo.",
+      "Hmax = (v0² * sen²(ángulo)) / (2 * g).",
+      "Hmax = (19,6² * sen²(45°)) / (2 * 9,8) = (384,16 * 0,5) / 19,6 = 9,8 m."
+    ]
+  },
+  {
+    "id": "ej-mec-03",
+    "topic": "Movimiento Parabólico",
+    "scenario": "dron",
+    "difficulty": "intermedio",
+    "question": "Con v0 = 20 m/s, ángulo = 30° y gravedad de aula g = 10 m/s², ¿cuánto dura el vuelo total si el dron sale y llega a la misma altura?",
+    "questionJopara": "V0 = 20 m/s, ángulo = 30° ha gravedad aula-pe g = 10 m/s². ¿Mboy tiempo-pa oho vuelo-pe, oñepyrũ ha opa peteĩ altura-pe?",
+    "values": { "v0": 20, "angle": 30, "gravity": 10 },
+    "expectedConcept": "tiempo-de-vuelo",
+    "correctAnswer": 2,
+    "unit": "s",
+    "tolerance": 0.01,
+    "targetX": 34.64,
+    "targetY": 0,
+    "hints": [
+      "Mirá solo el eje vertical: en la cúspide la velocidad vertical se hace cero.",
+      "El tiempo total de vuelo es el doble del tiempo que tarda en llegar a la altura máxima.",
+      "T = (2 * v0y) / g.",
+      "vy = 20 * sen(30°) = 10 m/s; T = (2 * 10) / 10 = 2 segundos."
+    ]
+  },
+  {
+    "id": "ej-04",
+    "topic": "Movimiento Parabólico",
+    "scenario": "dron",
+    "difficulty": "intermedio",
+    "question": "El dron avanza horizontalmente a vx ≈ 17,32 m/s durante un vuelo de T = 2 s. ¿Qué distancia horizontal total (alcance R) recorre?",
+    "questionJopara": "Pe dron oho horizontalmente vx ≈ 17,32 m/s-pe T = 2 s pukukue. ¿Mboy distancia horizontal (alcance R) ojapo?",
+    "values": { "vx": 17.32, "t": 2, "gravity": 10 },
+    "expectedConcept": "alcance",
+    "correctAnswer": 34.64,
+    "unit": "m",
+    "tolerance": 0.01,
+    "targetX": 34.64,
+    "targetY": 0,
+    "hints": [
+      "En el eje horizontal el movimiento es uniforme: no hay aceleración.",
+      "El alcance es simplemente velocidad horizontal por tiempo total.",
+      "R = vx * T.",
+      "R = 17,32 m/s * 2 s = 34,64 metros."
+    ]
+  },
+  {
+    "id": "ej-06",
+    "topic": "Movimiento Parabólico",
+    "scenario": "dron",
+    "difficulty": "avanzado",
+    "question": "Misión Alto Paraná: un puesto sanitario está a 40 m de distancia, a la misma altura de salida. Con v0 = 20 m/s y g = 10 m/s², ¿qué ángulo (en grados) logra llegar exactamente al objetivo?",
+    "questionJopara": "Misión Alto Paraná: peteĩ puesto sanitario oĩ 40 m-pe, peteĩ altura-pe. V0 = 20 m/s ha g = 10 m/s² ramo, mba'e ángulo-pa og̃uahẽ hag̃ua exactamente objetivo-pe?",
+    "values": { "v0": 20, "targetDistance": 40, "gravity": 10 },
+    "expectedConcept": "alcance",
+    "correctAnswer": 45,
+    "unit": "°",
+    "tolerance": 0,
+    "targetX": 40,
+    "targetY": 0,
+    "hints": [
+      "El alcance máximo para una velocidad dada se logra con un único ángulo especial.",
+      "El alcance depende de sen(2 * ángulo); ese factor es máximo cuando vale 1.",
+      "R = (v0² * sen(2 * ángulo)) / g → 40 = (400 * sen(2 * ángulo)) / 10 → sen(2 * ángulo) = 1.",
+      "sen(2 * ángulo) = 1 → 2 * ángulo = 90° → ángulo = 45°."
+    ]
+  },
+  {
+    "id": "ej-07",
+    "topic": "Movimiento Parabólico",
+    "scenario": "dron",
+    "difficulty": "avanzado",
+    "question": "Se lanzan dos drones con v0 = 20 m/s y g = 10 m/s²: el dron A a 30° y el dron B a 60°. Si el dron A alcanzó 34,64 m, ¿cuál es el alcance del dron B?",
+    "questionJopara": "Ñamombo mokõi dron v0 = 20 m/s ha g = 10 m/s² reheve: dron A 30°-pe ha dron B 60°-pe. Dron A ohupyty 34,64 m. ¿Mboýpa pe alcance dron B?",
+    "values": { "v0": 20, "angleA": 30, "angleB": 60, "gravity": 10 },
+    "expectedConcept": "alcance",
+    "correctAnswer": 34.64,
+    "unit": "m",
+    "tolerance": 0.01,
+    "targetX": 34.64,
+    "targetY": 0,
+    "hints": [
+      "30° y 60° suman 90°: son ángulos complementarios.",
+      "El alcance depende de sen(2 * ángulo); compará sen(2*30°) con sen(2*60°).",
+      "sen(60°) y sen(120°) son iguales, así que ambos alcances coinciden.",
+      "Por esa simetría, el alcance del dron B también es 34,64 metros."
+    ]
+  },
+  {
+    "id": "eb-01",
+    "topic": "Movimiento Parabólico",
+    "scenario": "basketball",
+    "difficulty": "básico",
+    "question": "Una jugadora lanza el balón de básquet con v0 = 12 m/s formando un ángulo de 50° sobre la horizontal. ¿Cuál es la componente horizontal (vx) de la velocidad?",
+    "questionJopara": "Peteĩ jugadora omombo pe balón v0 = 12 m/s ha ángulo 50°-pe horizontal ári. ¿Mboýpa pe componente horizontal (vx)?",
+    "values": { "v0": 12, "angle": 50, "gravity": 9.8 },
+    "expectedConcept": "componente-horizontal",
+    "correctAnswer": 7.71,
+    "unit": "m/s",
+    "tolerance": 0.01,
+    "targetX": 14.47,
+    "targetY": 0,
+    "hints": [
+      "El balón avanza hacia el aro con una parte de la velocidad y sube con la otra.",
+      "La parte que avanza hacia adelante se calcula con el coseno del ángulo.",
+      "vx = v0 * cos(ángulo).",
+      "vx = 12 * cos(50°) ≈ 12 * 0,6428 = 7,71 m/s."
+    ]
+  },
+  {
+    "id": "eb-02",
+    "topic": "Movimiento Parabólico",
+    "scenario": "basketball",
+    "difficulty": "intermedio",
+    "question": "Con el mismo lanzamiento (v0 = 12 m/s, ángulo de 50°, g = 9,8 m/s²), ¿cuánto tiempo permanece el balón en el aire hasta caer en la zona de tiro?",
+    "questionJopara": "Pe lanzamiento peteĩcha (v0 = 12 m/s, ángulo 50°, g = 9,8 m/s²) reheve, ¿mboy tiempo-pa oĩ el balón aire-pe og̃uahẽ mboyve zona de tiro-pe?",
+    "values": { "v0": 12, "angle": 50, "gravity": 9.8 },
+    "expectedConcept": "tiempo-de-vuelo",
+    "correctAnswer": 1.88,
+    "unit": "s",
+    "tolerance": 0.01,
+    "targetX": 14.47,
+    "targetY": 0,
+    "hints": [
+      "El balón sube, frena, y baja: el tiempo total se reparte igual en la subida y en la bajada.",
+      "El tiempo total de vuelo es el doble del tiempo que tarda en llegar a la altura máxima.",
+      "T = (2 * v0 * sen(ángulo)) / g.",
+      "vy = 12 * sen(50°) ≈ 9,19 m/s; T = (2 * 9,19) / 9,8 ≈ 1,88 s."
+    ]
+  },
+  {
+    "id": "eb-03",
+    "topic": "Movimiento Parabólico",
+    "scenario": "basketball",
+    "difficulty": "avanzado",
+    "question": "Un jugador lanza con v0 = 10 m/s. ¿Qué ángulo (entre 0° y 90°) hace que el balón caiga exactamente en la marca ubicada a 10 m, suponiendo salida y llegada a la misma altura y g = 10 m/s²?",
+    "questionJopara": "Peteĩ jugador omombo v0 = 10 m/s reheve. ¿Mba'e ángulo-pa (0° ha 90° mbytépe) omboguejy pe balón exactamente 10 m-pe, g = 10 m/s² reheve?",
+    "values": { "v0": 10, "targetDistance": 10, "gravity": 10 },
+    "expectedConcept": "alcance",
+    "correctAnswer": 45,
+    "unit": "°",
+    "tolerance": 0,
+    "targetX": 10,
+    "targetY": 0,
+    "hints": [
+      "Hay un único ángulo que da el mayor alcance posible para una velocidad dada.",
+      "El alcance depende de sen(2 * ángulo); ese factor es máximo cuando vale 1.",
+      "R = (v0² * sen(2 * ángulo)) / g → 10 = (100 * sen(2 * ángulo)) / 10 → sen(2 * ángulo) = 1.",
+      "sen(2 * ángulo) = 1 → 2 * ángulo = 90° → ángulo = 45°."
+    ]
+  },
+  {
+    "id": "ew-01",
+    "topic": "Movimiento Parabólico",
+    "scenario": "wall",
+    "difficulty": "básico",
+    "question": "Valeria devuelve la pelota por encima del paredón del patio con v0 = 15 m/s y ángulo de 40° sobre la horizontal. ¿Cuál es la componente vertical (vy) inicial?",
+    "questionJopara": "Valeria omboguevi pe pelota paredón ári v0 = 15 m/s ha ángulo 40°-pe horizontal ári. ¿Mboýpa pe componente vertical (vy) inicial?",
+    "values": { "v0": 15, "angle": 40, "gravity": 9.8 },
+    "expectedConcept": "componente-vertical",
+    "correctAnswer": 9.64,
+    "unit": "m/s",
+    "tolerance": 0.01,
+    "targetX": 22.61,
+    "targetY": 0,
+    "obstacle": { "x": 8, "height": 1.5 },
+    "hints": [
+      "La pelota necesita ganar altura para pasar por encima del paredón.",
+      "El impulso hacia arriba se calcula con el seno del ángulo.",
+      "vy = v0 * sen(ángulo).",
+      "vy = 15 * sen(40°) ≈ 15 * 0,6428 = 9,64 m/s."
+    ]
+  },
+  {
+    "id": "ew-02",
+    "topic": "Movimiento Parabólico",
+    "scenario": "wall",
+    "difficulty": "intermedio",
+    "question": "Con el mismo lanzamiento (v0 = 15 m/s, 40°, g = 9,8 m/s²), ¿qué altura máxima alcanza la pelota? El paredón mide 2 m: comprobá con el simulador si lo supera.",
+    "questionJopara": "Pe lanzamiento peteĩcha (v0 = 15 m/s, 40°, g = 9,8 m/s²) reheve, ¿mboýpa pe altura máxima? Pe paredón oguereko 2 m: ehechami simulador-pe okupasapa.",
+    "values": { "v0": 15, "angle": 40, "gravity": 9.8 },
+    "expectedConcept": "altura-maxima",
+    "correctAnswer": 4.74,
+    "unit": "m",
+    "tolerance": 0.01,
+    "targetX": 22.61,
+    "targetY": 0,
+    "obstacle": { "x": 8, "height": 2 },
+    "hints": [
+      "En el punto más alto, la velocidad vertical se hace cero por un instante.",
+      "La altura máxima usa la componente vertical al cuadrado, dividida por el doble de la gravedad.",
+      "Hmax = (v0² * sen²(ángulo)) / (2 * g).",
+      "Hmax = (15² * sen²(40°)) / (2 * 9,8) ≈ (225 * 0,4132) / 19,6 ≈ 4,74 m."
+    ]
+  },
+  {
+    "id": "ew-03",
+    "topic": "Movimiento Parabólico",
+    "scenario": "wall",
+    "difficulty": "avanzado",
+    "question": "Dos lanzamientos por encima del paredón tienen v0 = 16 m/s y g = 10 m/s²: uno a 25° y otro a 65°. Si el de 25° cae a 19,61 m del paredón, ¿cuál es el alcance del de 65°?",
+    "questionJopara": "Mokõi lanzamiento paredón ári oguereko v0 = 16 m/s ha g = 10 m/s²: peteĩ 25°-pe ha ambue 65°-pe. Pe 25°-gua ho'a 19,61 m-pe. ¿Mboýpa pe alcance 65°-gua?",
+    "values": { "v0": 16, "angleA": 25, "angleB": 65, "gravity": 10 },
+    "expectedConcept": "alcance",
+    "correctAnswer": 19.61,
+    "unit": "m",
+    "tolerance": 0.01,
+    "targetX": 19.61,
+    "targetY": 0,
+    "obstacle": { "x": 8, "height": 1.5 },
+    "hints": [
+      "25° y 65° suman 90°: son ángulos complementarios.",
+      "El alcance depende de sen(2 * ángulo); compará sen(2*25°) con sen(2*65°).",
+      "sen(50°) y sen(130°) son iguales, así que ambos alcances coinciden.",
+      "Por esa simetría, el alcance del lanzamiento a 65° también es 19,61 metros."
     ]
   }
 ]

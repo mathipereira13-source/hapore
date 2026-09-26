@@ -1,0 +1,36 @@
+[
+  {
+    "id": "openstax-physics-projectile-5-3",
+    "institution": "OpenStax, Rice University",
+    "authors": ["Paul Peter Urone", "Roger Hinrichs"],
+    "title": "Physics",
+    "edition": "OpenStax digital edition",
+    "publicationYear": 2020,
+    "section": "5.3 Projectile Motion",
+    "page": "No aplica: edición web sin paginación estable",
+    "url": "https://openstax.org/books/physics/pages/5-3-projectile-motion",
+    "doi": null,
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "supports": ["Movimiento parabólico", "componentes de velocidad", "tiempo de vuelo", "altura máxima", "alcance"],
+    "supportsJopara": ["Movimiento parabólico", "componente de velocidad", "tiempo de vuelo", "altura máxima", "alcance"],
+    "assumptions": "Modelo ideal: resistencia del aire despreciable y aceleración gravitatoria constante. El alcance máximo a 45° requiere salida y llegada al mismo nivel.",
+    "assumptionsJopara": "Modelo ideal: ndojehechái resistencia del aire ha aceleración gravitatoria opyta constante. 45° ome'ẽ alcance máximo salida ha llegada peteĩ nivel-pe ramo."
+  },
+  {
+    "id": "nasa-stem-ball-launcher",
+    "institution": "NASA STEM",
+    "authors": ["NASA"],
+    "title": "Ball Launcher",
+    "edition": "Recurso educativo en línea",
+    "publicationYear": 2021,
+    "section": "Actividad sobre trayectorias y condiciones ideales",
+    "page": "No aplica: edición web sin paginación estable",
+    "url": "https://www.nasa.gov/stem-content/ball-launcher/",
+    "doi": null,
+    "license": "Dominio público (NASA)",
+    "supports": ["Movimiento parabólico", "ángulo de lanzamiento", "condiciones ideales"],
+    "supportsJopara": ["Movimiento parabólico", "ángulo de lanzamiento", "condiciones ideales"],
+    "assumptions": "Actividad de referencia para diseñar situaciones de lanzamiento; los valores numéricos de los ejercicios de esta app se calculan con las fórmulas de OpenStax, no con esta fuente.",
+    "assumptionsJopara": "Ko actividad oipytyvõ oñemboheko hag̃ua situaciones de lanzamiento. Umi número ejercicio-kuérape oúva oñecalcula fórmula OpenStax reheve; ndaha'éi NASA fuente-gui."
+  }
+]

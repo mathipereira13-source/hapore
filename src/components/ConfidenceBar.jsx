@@ -1,25 +1,75 @@
-export default function ConfidenceBar({ confidence }) {
-  const safeValue = Math.max(0, Math.min(100, Math.round(confidence)));
+import { useEffect, useRef, useState } from 'react';
+import { getNextLevel } from '../utils/gamification.js';
+import { Nanduti } from './Nanduti.jsx';
+
+export default function ConfidenceBar({ xp, level, confidence }) {
+  const safeXP = Math.max(0, Math.floor(Number(xp) || 0));
+  const safeConfidence = Math.max(0, Math.min(100, Math.round(Number(confidence) || 0)));
+  const currentLevel =
+    level ?? { level: 1, xp: 0, rank: 'Temimbo\'e Pyahu', title: 'Iniciante' };
+  const next = getNextLevel(safeXP);
+  const span = next ? next.xp - currentLevel.xp : 0;
+  const progress = next
+    ? Math.min(100, Math.max(0, Math.round(((safeXP - currentLevel.xp) / span) * 100)))
+    : 100;
+
+  const [isLevelUp, setIsLevelUp] = useState(false);
+  const prevLevelRef = useRef(currentLevel.level);
+
+  useEffect(() => {
+    if (currentLevel.level > prevLevelRef.current) {
+      setIsLevelUp(true);
+      const timer = setTimeout(() => setIsLevelUp(false), 550);
+      prevLevelRef.current = currentLevel.level;
+      return () => clearTimeout(timer);
+    }
+    prevLevelRef.current = currentLevel.level;
+    return undefined;
+  }, [currentLevel.level]);
 
   return (
-    <section className="card confidence-bar" aria-label="Nivel de Confianza">
+    <section className="card confidence-bar" aria-label="Mbarete XP y Nivel de Cuenta">
       <div className="confidence-row">
-        <h2>Nivel de Confianza</h2>
-        <span className="confidence-value">{safeValue}%</span>
+        <span className={`confidence-level ${isLevelUp ? 'is-leveling' : ''}`} aria-hidden="true">
+          <Nanduti size={46} spokes={12} rings={2} />
+          <strong>{currentLevel.level}</strong>
+        </span>
+        <div className="confidence-title">
+          <h2>Mbarete XP</h2>
+          <p>{currentLevel.rank} <small>· {currentLevel.title}</small></p>
+        </div>
+        <span className="confidence-value">{safeXP}<small>XP</small></span>
       </div>
       <div
         className="confidence-track"
         role="progressbar"
-        aria-label="Nivel de Confianza"
+        aria-label="Progreso al siguiente nivel"
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuenow={safeValue}
+        aria-valuenow={progress}
       >
-        <div className="confidence-fill" style={{ width: `${safeValue}%` }} />
+        <div className="confidence-fill" style={{ width: `${progress}%` }} />
       </div>
       <p className="confidence-hint">
-        Solo puede subir: ejercicio sin pistas +25 · con pistas +15 · tarjeta consolidada +5.
+        Nivel {currentLevel.level}
+        {next
+          ? ` · Faltan ${Math.max(0, next.xp - safeXP)} XP para el nivel ${next.level}`
+          : ' · ¡Nivel máximo alcanzado!'}
       </p>
+      <p className="confidence-explainer">
+        XP mide cuánto practicaste; el nivel es un logro por acumular XP. Nunca bajan, aunque te equivoques.
+      </p>
+      <div className="confidence-meter" aria-label="Confianza">
+        <div className="confidence-meter-head"><span>Confianza</span><strong>{safeConfidence}/100</strong></div>
+        <div className="confidence-track" role="progressbar" aria-label="Confianza sobre 100" aria-valuemin={0} aria-valuemax={100} aria-valuenow={safeConfidence}>
+          <div className="confidence-fill confidence-fill-metric" style={{ width: `${safeConfidence}%` }} />
+        </div>
+        <p className="confidence-explainer">Mide qué tan seguido acertás sin pistas. Sube con cada acierto y nunca baja con un error.</p>
+      </div>
+      <details className="confidence-rules">
+        <summary>¿Cómo gano XP?</summary>
+        <p>La XP solo sube, nunca baja. Ejercicio sin pistas +50 · con pistas +25 · tarjeta consolidada +15 · pregunta del cuestionario +30.</p>
+      </details>
     </section>
   );
 }
