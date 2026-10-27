@@ -2,7 +2,7 @@
 // presentación. Se carga solo al abrirla (usa los mismos datos que la app).
 import { TOPICS, topicCurriculum, pickLang } from '../curriculum/topics/index.js';
 import { SOURCES } from '../curriculum/sources.js';
-import { GUIDE_SCHEDULES } from '../curriculum/curriculum.js';
+import { GUIDE_SCHEDULES, prioLabel } from '../curriculum/curriculum.js';
 
 export default function MecTable({ language }) {
   const es = language === 'es';
@@ -18,7 +18,7 @@ export default function MecTable({ language }) {
             <small> — {course.base ? `${SOURCES.A.resolution}, ${course.base.pages}` : `${pickLang(SOURCES.C.short, language)}, ${GUIDE_SCHEDULES[course.id]?.pages ?? ''}`}</small>
           </span>)}</td>
           <td>{placements.filter(p => p.course.prio).map(({ course, capacity }, index) => <span key={index}>
-            {pickLang(course.name, language)}: {capacity.prio !== null ? `n.º ${capacity.prio}` : (es ? 'no figura' : 'ndaipóri')}
+            {pickLang(course.name, language)}: {capacity.prio !== null ? prioLabel(capacity.prio) : (es ? 'no figura' : 'ndaipóri')}
           </span>)}</td>
         </tr>;
       })}</tbody>

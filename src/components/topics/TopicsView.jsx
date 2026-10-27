@@ -2,10 +2,10 @@
 // unidades del programa del MEC y entra a un tema. Puede marcar "mis temas" y
 // ver el orden de la Guía 2021.
 import { useMemo, useState } from 'react';
-import { COURSES, GUIDE_SCHEDULES, GUIDE_C1_NOTE, courseById } from '../../curriculum/curriculum.js';
+import { SUBJECTS, GUIDE_SCHEDULES, GUIDE_C1_NOTE, courseById, subjectCourses } from '../../curriculum/curriculum.js';
 import { SOURCES } from '../../curriculum/sources.js';
 import { topicById, pickLang, normalize, AREAS } from '../../curriculum/topics/index.js';
-import { getCourse, setCourse as saveCourse, getMyTopics, toggleMyTopic, topicStats } from '../../curriculum/progress.js';
+import { getCourse, setCourse as saveCourse, getMyTopics, toggleMyTopic, topicStats, getSubject, setSubject as saveSubject } from '../../curriculum/progress.js';
 import { useTranslation } from '../../i18n/LanguageProvider.jsx';
 import TopicIcon from './TopicIcon.jsx';
 import MecSources from './MecSources.jsx';
@@ -32,16 +32,23 @@ function TopicCard({ topic, prio, solved, mine, onOpen, onToggleMine, language, 
 
 export default function TopicsView({ learning, teacherTopics = [], onOpenTopic }) {
   const { t, language } = useTranslation();
-  const [courseId, setCourseId] = useState(getCourse);
+  const [subject, setSubject] = useState(getSubject);
+  const [courseId, setCourseId] = useState(() => {
+    const saved = courseById(getCourse());
+    return saved?.subject === getSubject() ? saved.id : subjectCourses(getSubject())[0].id;
+  });
   const [filter, setFilter] = useState('all');
   const [order, setOrder] = useState('program');
   const [query, setQuery] = useState('');
   const [mine, setMine] = useState(getMyTopics);
   const [sourcesOpen, setSourcesOpen] = useState(false);
   const course = courseById(courseId);
+  const courses = subjectCourses(subject);
+  const subjectName = pickLang(SUBJECTS.find(item => item.id === subject).name, language);
   const stats = useMemo(() => topicStats(learning.attemptLog), [learning.attemptLog]);
   const schedule = GUIDE_SCHEDULES[courseId];
   const chooseCourse = id => { setCourseId(id); saveCourse(id); if (id !== 'c1' && order === 'guide' && !GUIDE_SCHEDULES[id]) setOrder('program'); };
+  const chooseSubject = id => { setSubject(id); saveSubject(id); chooseCourse(subjectCourses(id)[0].id); setQuery(''); };
   const toggle = id => setMine(toggleMyTopic(id));
   const q = normalize(query);
   const matches = topic => !q || normalize(`${topic.name.es} ${topic.name.gn} ${(topic.keywords ?? []).join(' ')}`).includes(q);
@@ -63,19 +70,25 @@ export default function TopicsView({ learning, teacherTopics = [], onOpenTopic }
   }).filter(group => group.items.length);
 
   return <div className="topics-view">
+    <div className="topics-subjects" role="tablist" aria-label={t('topics.subject')}>
+      {SUBJECTS.map(item => <button key={item.id} type="button" role="tab" aria-selected={item.id === subject} className={`topics-subject${item.id === subject ? ' is-active' : ''}`} onClick={() => chooseSubject(item.id)}>
+        <span className="topics-subject-icon"><TopicIcon name={item.id === 'fisica' ? 'launch' : 'function'} size={22} /></span>{pickLang(item.name, language)}
+      </button>)}
+    </div>
     <section className="topics-courses" aria-label={t('topics.course')}>
       <div className="topics-courses-row" role="tablist">
-        {COURSES.map(item => <button key={item.id} type="button" role="tab" aria-selected={item.id === courseId} className={`topics-course${item.id === courseId ? ' is-active' : ''}`} onClick={() => chooseCourse(item.id)}>
+        {courses.map(item => <button key={item.id} type="button" role="tab" aria-selected={item.id === courseId} className={`topics-course${item.id === courseId ? ' is-active' : ''}`} onClick={() => chooseCourse(item.id)}>
           <strong>{pickLang(item.name, language)}</strong>
           <small>{pickLang(item.planName, language)}</small>
         </button>)}
       </div>
       <p className="topics-course-scope">{pickLang(course.scope, language)}</p>
       <div className="topics-source-line">
-        <span>{course.base ? `${SOURCES.A.resolution} · ${t('topics.levelNote')} · ${course.base.pages}` : `${pickLang(SOURCES.C.short, language)} · ${GUIDE_SCHEDULES.c3c.pages}`}</span>
+        <span>{course.base ? `${SOURCES.A.resolution} · Educación Media · ${subjectName} · ${course.base.pages}` : `${pickLang(SOURCES.C.short, language)} · ${GUIDE_SCHEDULES.c3c.pages}`}</span>
         <button type="button" className="topics-link" onClick={() => setSourcesOpen(true)}><TopicIcon name="source" size={16} />{t('topics.sourcesBtn')}</button>
       </div>
       {course.guideNote && <p className="topics-note">{pickLang(course.guideNote, language)}</p>}
+      {course.note && <p className="topics-note">{pickLang(course.note, language)}</p>}
     </section>
 
     {picked.length > 0 && <section className="topics-picked">

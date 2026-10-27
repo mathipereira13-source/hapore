@@ -4,6 +4,8 @@
 // ilimitada y la corrección es automática, también sin internet.
 // Fórmulas de física estándar (ver FORMULA_NOTE en sources.js).
 
+import { buildMathGenerators } from './mathPractice.js';
+
 const G_EARTH = 9.8;
 const C_LIGHT = 3e8;
 const K_COULOMB = 9e9;
@@ -286,6 +288,9 @@ const GENERATORS = {
   'q-photon': rng => { const f = pick(rng, [4.3, 5, 6, 7.5]) * 1e14; return make({ prompt: L(`¿Qué energía tiene un fotón de luz visible de ${fmt(f)} Hz, en electronvoltios? (1 eV = 1,6 × 10⁻¹⁹ J)`, `¿Mba’e energía oguereko fotón tesape ${fmt(f)} Hz, electronvoltio-pe? (1 eV = 1,6 × 10⁻¹⁹ J)`), data: [d('h', H_PLANCK, 'J·s'), d('f', f, 'Hz')], ask: 'E', formula: 'E = h · f', subst: `E = 6,63 × 10⁻³⁴ · ${fmt(f)} J`, answer: H_PLANCK * f / E_CHARGE, unit: 'eV', hint: L('Calculá en joules y dividí por 1,6 × 10⁻¹⁹.', 'Ecalcula joule-pe ha edividi 1,6 × 10⁻¹⁹ rehe.') }); },
   'q-photoelectric': rng => { const f = pick(rng, [1, 1.2, 1.5]) * 1e15; const phi = pick(rng, [2.3, 2.75, 4.3]); const Ec = H_PLANCK * f / E_CHARGE - phi; return make({ prompt: L(`Luz ultravioleta de ${fmt(f)} Hz ilumina un metal con función trabajo de ${fmt(phi)} eV. ¿Con qué energía cinética máxima salen los electrones (eV)?`, `Tesape ultravioleta ${fmt(f)} Hz ohesape metal función trabajo ${fmt(phi)} eV-pe. ¿Mba’e energía cinética máxima-pe osẽ electrón (eV)?`), data: [d('f', f, 'Hz'), d('φ', phi, 'eV')], ask: 'E_{c}', formula: 'E_{c} = h · f − φ', subst: `E_{c} = 6,63 × 10⁻³⁴ · ${fmt(f)} / 1,6 × 10⁻¹⁹ − ${fmt(phi)}`, answer: Ec, unit: 'eV' }); },
   'q-frequency': rng => { const E = pick(rng, [1.8, 2.5, 3.1]); return make({ prompt: L(`Un fotón tiene ${fmt(E)} eV. ¿Cuál es su frecuencia?`, `Peteĩ fotón oguereko ${fmt(E)} eV. ¿Mboýpa ifrecuencia?`), data: [d('E', E, 'eV'), d('h', H_PLANCK, 'J·s')], ask: 'f', formula: 'f = E / h', subst: `f = ${fmt(E)} · 1,6 × 10⁻¹⁹ / 6,63 × 10⁻³⁴`, answer: E * E_CHARGE / H_PLANCK, unit: 'Hz' }); },
+
+  // Matemática (mathPractice.js)
+  ...buildMathGenerators({ make, d, L, pick, int, fmt }),
 };
 
 export const GENERATOR_IDS = Object.keys(GENERATORS);

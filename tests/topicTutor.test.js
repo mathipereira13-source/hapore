@@ -15,6 +15,21 @@ test('reconoce el tema de la pregunta y deja el tiro parabólico a su motor', ()
   assert.equal(detectTopic('una pelota sale a 20 m/s con 30°'), null);
 });
 
+test('reconoce los temas de Matemática y responde con su aplicación', () => {
+  assert.equal(detectTopic('¿Qué es una progresión geométrica?')?.id, 'progresiones');
+  assert.equal(detectTopic('propiedades de los logaritmos')?.id, 'exponencial-logaritmo');
+  assert.equal(detectTopic('¿dónde está el foco de la parábola x² = 8y?')?.id, 'conicas', 'la parábola de cónicas no es tiro parabólico');
+  assert.equal(detectTopic('regla de Cramer')?.id, 'sistemas-ecuaciones');
+  assert.equal(detectTopic('¿Qué es la mediana?')?.id, 'medidas-estadisticas');
+  const answer = topicTutorAnswer('explicame el interés compuesto', [], 'es');
+  assert.match(answer.message, /Matemática aplicada/);
+  assert.match(answer.message, /Res\. MEC N° 12\.506\/09 BIS/);
+  assert.match(answer.message, /Temas → Matemática →/);
+  const practice = topicTutorAnswer('dame un ejercicio de derivadas', [], 'es');
+  assert.equal(practice.widget.type, 'topic-exercise');
+  assert.equal(practice.widget.topicId, 'derivadas');
+});
+
 test('lee números con unidades y los pasa al SI', () => {
   const q = extractQuantities('R1 = 2 kΩ, 500 g, 72 km/h, 3 μC, 20 °C, 5 cm y 2 x 10^-6 C');
   assert.deepEqual(q.R, [2000]);

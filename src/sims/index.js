@@ -23,6 +23,16 @@ import CapacitorSim from './CapacitorSim.jsx';
 import MagnetSim from './MagnetSim.jsx';
 import RelativitySim from './RelativitySim.jsx';
 import PhotoelectricSim from './PhotoelectricSim.jsx';
+import FunctionSim from './math/FunctionSim.jsx';
+import TriangleSim from './math/TriangleSim.jsx';
+import AnalyticSim from './math/AnalyticSim.jsx';
+import ConicSim from './math/ConicSim.jsx';
+import MatrixSim from './math/MatrixSim.jsx';
+import SequenceSim from './math/SequenceSim.jsx';
+import CalculusSim from './math/CalculusSim.jsx';
+import StatsSim from './math/StatsSim.jsx';
+import LogicSim from './math/LogicSim.jsx';
+import CountingSim from './math/CountingSim.jsx';
 
 export const SIMULATORS = {
   motion: MotionSim,
@@ -49,4 +59,15 @@ export const SIMULATORS = {
   magnet: MagnetSim,
   relativity: RelativitySim,
   photoelectric: PhotoelectricSim,
+  // Matemática
+  function: FunctionSim,
+  triangle: TriangleSim,
+  analytic: AnalyticSim,
+  conic: ConicSim,
+  matrix: MatrixSim,
+  sequence: SequenceSim,
+  calculus: CalculusSim,
+  stats: StatsSim,
+  logic: LogicSim,
+  counting: CountingSim,
 };

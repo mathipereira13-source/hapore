@@ -3,8 +3,8 @@
 // 2021 y semana de la Guía 2021).
 import { useEffect, useState } from 'react';
 import { topicById, topicCurriculum, pickLang } from '../../curriculum/topics/index.js';
-import { SOURCES, FORMULA_NOTE } from '../../curriculum/sources.js';
-import { GUIDE_SCHEDULES } from '../../curriculum/curriculum.js';
+import { SOURCES, FORMULA_NOTE, MATH_FORMULA_NOTE } from '../../curriculum/sources.js';
+import { GUIDE_SCHEDULES, prioLabel } from '../../curriculum/curriculum.js';
 import { getMyTopics, toggleMyTopic, setLastTopic } from '../../curriculum/progress.js';
 import { useTranslation } from '../../i18n/LanguageProvider.jsx';
 import { Formula } from '../MathText.jsx';
@@ -40,7 +40,7 @@ function MecPanel({ topicId, onOpenSources }) {
         <strong>{pickLang(course.name, language)} · {pickLang(course.planName, language)} · {pickLang(unit.name, language)}</strong>
         <p>{capacity.n ? `${t('topics.capacity', { n: capacity.n })}: ` : ''}“{capacity.text}”</p>
         <small>{course.base ? `${SOURCES.A.resolution} · ${pickLang(SOURCES.A.short, language)}, ${course.base.pages}` : `${pickLang(SOURCES.C.short, language)}, ${GUIDE_SCHEDULES[course.id]?.pages ?? ''}`}
-          {course.prio && <> · {capacity.prio ? `${t('topics.prioBadge')} (n.º ${capacity.prio}, ${course.prio.pages})` : t('topics.notPrio')}</>}</small>
+          {course.prio && <> · {capacity.prio ? `${t('topics.prioBadge')} (${prioLabel(capacity.prio)}, ${course.prio.pages})` : t('topics.notPrio')}</>}</small>
       </li>)}
     </ul>
     {guideWeeks.length > 0
@@ -92,8 +92,9 @@ export default function TopicPage({ topicId, initialTab = 'learn', onBack, learn
       <section className="card topic-formulas">
         <span className="panel-eyebrow">{t('topics.formulas')}</span>
         <div className="topic-formula-grid">{topic.formulas.map((item, i) => <div key={i} className="topic-formula"><Formula text={item.f} /><small>{pickLang(item, language)}</small></div>)}</div>
-        <p className="topic-formula-note">{pickLang(FORMULA_NOTE, language)}</p>
+        <p className="topic-formula-note">{pickLang(topic.subject === 'matematica' ? MATH_FORMULA_NOTE : FORMULA_NOTE, language)}</p>
       </section>
+      {topic.application && <section className="card topic-aside is-application"><span className="panel-eyebrow">{t('topics.application')}</span><p>{pickLang(topic.application, language)}</p></section>}
       <div className="topic-pair">
         <section className="card topic-aside is-example"><span className="panel-eyebrow">{t('topics.example')}</span><p>{pickLang(topic.example, language)}</p></section>
         <section className="card topic-aside is-mistake"><span className="panel-eyebrow">{t('topics.mistake')}</span><p>{pickLang(topic.mistake, language)}</p></section>

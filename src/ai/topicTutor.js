@@ -5,7 +5,7 @@
 // ejercicios generados con corrección. El tiro parabólico sigue a cargo de
 // chatTools.js, que tiene su propio motor (cuaderno, gráfico, simulación).
 import { TOPICS, topicById, topicCurriculum, pickLang, normalize } from '../curriculum/topics/index.js';
-import { COURSES, GUIDE_SCHEDULES, courseTopicIds } from '../curriculum/curriculum.js';
+import { COURSES, SUBJECTS, GUIDE_SCHEDULES, courseTopicIds, prioLabel } from '../curriculum/curriculum.js';
 import { SOURCES } from '../curriculum/sources.js';
 import { generateExercise, checkAnswer, fmt, parseUserNumber } from '../curriculum/practice.js';
 
@@ -22,6 +22,8 @@ const WEAK = new Set(['cae', 'gravedad', 'grados', 'masa', 'peso', 'imagen', 'fo
   'propagacion', 'mezcla', 'flujo', 'escalar', 'prefijo', 'concurrentes', 'calesita', 'vueltas', 'alarga', 'estira']);
 // El tiro parabólico (y sus escenas) lo responde el motor de chatTools.js.
 const PARABOLIC = /parabol|proyectil|tiro oblicuo|alcance|altura maxima|tiempo de vuelo|angulo optimo|\bdron|basquet|paredon|\bv0|\bvx\b|\bvy\b|lanzamiento|componente (?:horizontal|vertical)|yvate|mombyry/;
+// …salvo que hable de la parábola de Matemática (cónicas o función cuadrática).
+const MATH_PARABOLA = /foco|directriz|conica|lado recto|antena|cuadratica|vertice de la parabola|ecuacion de la parabola/;
 
 const KEYWORD_TESTS = TOPICS.filter(topic => topic.id !== 'movimiento-parabolico').map(topic => ({
   topic,
@@ -35,7 +37,7 @@ const KEYWORD_TESTS = TOPICS.filter(topic => topic.id !== 'movimiento-parabolico
 /** Tema de Física del que habla el texto (o null si no queda claro). */
 export function detectTopic(text) {
   const s = normalize(text);
-  if (!s || PARABOLIC.test(s)) return null;
+  if (!s || (PARABOLIC.test(s) && !MATH_PARABOLA.test(s))) return null;
   if (/\d+\s*(?:°|grados?)\b/.test(s) && /m\s*\/\s*s/.test(s) && !/celsius|fahrenheit|kelvin|°\s*[cf]\b/.test(s)) return null;
   let best = null;
   for (const { topic, tests } of KEYWORD_TESTS) {
@@ -56,7 +58,7 @@ function mecCitation(topic, lang) {
     const source = course.base
       ? `${SOURCES.A.resolution}, ${pickLang(SOURCES.A.short, lang)}, ${course.base.pages}`
       : `${pickLang(SOURCES.C.short, lang)}, ${GUIDE_SCHEDULES[course.id]?.pages ?? ''}`;
-    const prio = course.prio ? (capacity.prio !== null ? L(lang, ` · Priorizado 2021 (n.º ${capacity.prio})`, ` · Priorizado 2021 (n.º ${capacity.prio})`) : '') : '';
+    const prio = course.prio && capacity.prio !== null ? ` · Priorizado 2021 (${prioLabel(capacity.prio)})` : '';
     return `${where}, ${cap}: “${capacity.text}” — ${source}${prio}.`;
   });
   const extra = placements.length - 2;
@@ -64,9 +66,12 @@ function mecCitation(topic, lang) {
   return `${L(lang, 'Según el MEC', 'MEC he’iháicha')}: ${lines.join(' ')}${more}`;
 }
 
-const whereToOpen = (topic, lang) => L(lang,
-  `Para verlo en movimiento: Temas → ${pickLang(topic.name, lang)} → Simulador.`,
-  `Rehecha hag̃ua omýiva: Tema-kuéra → ${pickLang(topic.name, lang)} → Simulador.`);
+const whereToOpen = (topic, lang) => {
+  const subject = topic.subject === 'matematica' ? 'Matemática' : 'Física';
+  return L(lang,
+    `Para verlo en el simulador: Temas → ${subject} → ${pickLang(topic.name, lang)} → Simulador.`,
+    `Rehecha hag̃ua simulador-pe: Tema-kuéra → ${subject} → ${pickLang(topic.name, lang)} → Simulador.`);
+};
 
 /* ---------- Explicación ---------- */
 
@@ -84,6 +89,7 @@ function explain(topic, lang, detailed, onlyFormulas) {
     '',
     `${L(lang, 'En la vida real', 'Tekove añetéme')}: ${pickLang(topic.example, lang)}`,
   ];
+  if (topic.application) parts.push(`${L(lang, 'Matemática aplicada', 'Matemática aplicada')}: ${pickLang(topic.application, lang)}`);
   if (detailed) {
     parts.push(`${L(lang, 'Error común', 'Javy ojehujepíva')}: ${pickLang(topic.mistake, lang)}`);
     if (topic.experiment) parts.push(`${L(lang, 'Experiencia para hacer', 'Experiencia rejapo hag̃ua')}: ${pickLang(topic.experiment, lang)}`);
@@ -440,13 +446,16 @@ function followExercise(open, text, lang) {
 /* ---------- Lista de temas ---------- */
 
 function topicList(lang) {
-  const lines = [L(lang, 'Temas de Física de la Educación Media (programa del MEC):', 'Educación Media Física tema-kuéra (MEC programa):')];
-  for (const course of COURSES) {
-    const names = courseTopicIds(course.id).map(id => pickLang(topicById(id)?.name, lang)).filter(Boolean);
-    lines.push(`• ${pickLang(course.name, lang)} (${pickLang(course.planName, lang)}): ${names.join(', ')}.`);
+  const lines = [L(lang, 'Temas de la Educación Media (programa del MEC):', 'Educación Media tema-kuéra (MEC programa):')];
+  for (const subject of SUBJECTS) {
+    lines.push('', `${pickLang(subject.name, lang).toUpperCase()}`);
+    for (const course of COURSES.filter(item => item.subject === subject.id)) {
+      const names = courseTopicIds(course.id).map(id => pickLang(topicById(id)?.name, lang)).filter(Boolean);
+      lines.push(`• ${pickLang(course.name, lang)} (${pickLang(course.planName, lang)}): ${names.join(', ')}.`);
+    }
   }
-  lines.push('', L(lang, 'Preguntame por cualquiera ("¿qué es la ley de Ohm?", "dame un ejercicio de MRU") o abrilos en Temas, con simulador y práctica.',
-    'Eporandu chéve oimeraẽre ("¿mba’épa ley de Ohm?", "eme’ẽ peteĩ ejercicio MRU") térã eipe’a Tema-kuéra-pe, simulador ha práctica reheve.'));
+  lines.push('', L(lang, 'Preguntame por cualquiera ("¿qué es la ley de Ohm?", "dame un ejercicio de logaritmos", "calculá la pendiente…") o abrilos en Temas, con simulador y práctica.',
+    'Eporandu chéve oimeraẽre ("¿mba’épa ley de Ohm?", "eme’ẽ peteĩ ejercicio logaritmo") térã eipe’a Tema-kuéra-pe, simulador ha práctica reheve.'));
   lines.push(`${L(lang, 'Fuente', 'Fuente')}: ${SOURCES.A.resolution} · ${pickLang(SOURCES.A.short, lang)}; ${pickLang(SOURCES.B.short, lang)}; ${pickLang(SOURCES.C.short, lang)}.`);
   return lines.join('\n');
 }

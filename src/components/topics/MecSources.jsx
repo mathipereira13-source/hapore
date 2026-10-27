@@ -1,7 +1,7 @@
 // Ventana con las fuentes del MEC: documentos analizados (con páginas y
 // SHA-256), resoluciones y otras normas citadas, y la competencia del área.
 import { useEffect, useRef } from 'react';
-import { SOURCES, NORMATIVE, COMPETENCIES, FORMULA_NOTE } from '../../curriculum/sources.js';
+import { SOURCES, NORMATIVE, COMPETENCIES, FORMULA_NOTE, MATH_FORMULA_NOTE } from '../../curriculum/sources.js';
 import { pickLang } from '../../curriculum/topics/index.js';
 import { useTranslation } from '../../i18n/LanguageProvider.jsx';
 
@@ -45,7 +45,9 @@ export default function MecSources({ open, onClose }) {
       <h3>{t('mec.competency')}</h3>
       <blockquote className="mec-quote">“{COMPETENCIES.comun.text}” <small>(Plan Común, doc. A, {COMPETENCIES.comun.pages})</small></blockquote>
       <blockquote className="mec-quote">“{COMPETENCIES.especifico.text}” <small>(Plan Específico, doc. A, {COMPETENCIES.especifico.pages})</small></blockquote>
-      <p className="mec-note">{pickLang(FORMULA_NOTE, language)}</p>
+      <blockquote className="mec-quote">“{COMPETENCIES.matematica.text}” <small>(Matemática, Plan Común, doc. A, {COMPETENCIES.matematica.pages})</small></blockquote>
+      <blockquote className="mec-quote">“{COMPETENCIES.logica.text}” <small>(Lógica Matemática y Estadística, Plan Específico, doc. A, {COMPETENCIES.logica.pages})</small></blockquote>
+      <p className="mec-note">{pickLang(FORMULA_NOTE, language)} {pickLang(MATH_FORMULA_NOTE, language)}</p>
       {/* Antes estaba en el botón flotante "MEC Res. 12506"; la atribución de
           OpenStax es obligatoria por su licencia CC BY 4.0. */}
       <h3>{t('mec.references')}</h3>

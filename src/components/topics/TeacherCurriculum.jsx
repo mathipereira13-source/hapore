@@ -3,10 +3,10 @@
 // Esos temas aparecen al alumno en "Elegidos por tu docente" y viajan con el
 // grupo de la nube. Cada tema se puede proyectar en pantalla completa.
 import { useEffect, useState } from 'react';
-import { COURSES, GUIDE_SCHEDULES, GUIDE_C1_NOTE, courseById, courseTopicIds } from '../../curriculum/curriculum.js';
+import { SUBJECTS, GUIDE_SCHEDULES, GUIDE_C1_NOTE, courseById, courseTopicIds, subjectCourses, prioLabel } from '../../curriculum/curriculum.js';
 import { SOURCES } from '../../curriculum/sources.js';
 import { topicById, pickLang } from '../../curriculum/topics/index.js';
-import { getCourse, setCourse as saveCourse, getTeacherTopics, setTeacherTopics } from '../../curriculum/progress.js';
+import { getCourse, setCourse as saveCourse, getTeacherTopics, setTeacherTopics, getSubject, setSubject as saveSubject } from '../../curriculum/progress.js';
 import { useTranslation } from '../../i18n/LanguageProvider.jsx';
 import { Formula } from '../MathText.jsx';
 import TopicIcon from './TopicIcon.jsx';
@@ -37,7 +37,11 @@ function Projector({ topicId, onClose }) {
 
 export default function TeacherCurriculum() {
   const { t, language } = useTranslation();
-  const [courseId, setCourseId] = useState(getCourse);
+  const [subject, setSubject] = useState(getSubject);
+  const [courseId, setCourseId] = useState(() => {
+    const saved = courseById(getCourse());
+    return saved?.subject === getSubject() ? saved.id : subjectCourses(getSubject())[0].id;
+  });
   const [view, setView] = useState('program');
   const [selected, setSelected] = useState(getTeacherTopics);
   const [saved, setSaved] = useState(false);
@@ -47,6 +51,7 @@ export default function TeacherCurriculum() {
   const schedule = GUIDE_SCHEDULES[courseId];
 
   const chooseCourse = id => { setCourseId(id); saveCourse(id); };
+  const chooseSubject = id => { setSubject(id); saveSubject(id); chooseCourse(subjectCourses(id)[0].id); };
   const change = next => { setSelected(next); setSaved(false); };
   const toggle = id => change(selected.includes(id) ? selected.filter(item => item !== id) : [...selected, id]);
   const toggleUnit = ids => change(ids.every(id => selected.includes(id)) ? selected.filter(id => !ids.includes(id)) : [...new Set([...selected, ...ids])]);
@@ -69,8 +74,13 @@ export default function TeacherCurriculum() {
     <h2>{t('plan.title')}</h2>
     <p className="teacher-note">{t('plan.lead')}</p>
 
+    <div className="topics-subjects" role="tablist" aria-label={t('topics.subject')}>
+      {SUBJECTS.map(item => <button key={item.id} type="button" role="tab" aria-selected={item.id === subject} className={`topics-subject${item.id === subject ? ' is-active' : ''}`} onClick={() => chooseSubject(item.id)}>
+        <span className="topics-subject-icon"><TopicIcon name={item.id === 'fisica' ? 'launch' : 'function'} size={22} /></span>{pickLang(item.name, language)}
+      </button>)}
+    </div>
     <div className="topics-courses-row" role="tablist" aria-label={t('topics.course')}>
-      {COURSES.map(item => <button key={item.id} type="button" role="tab" aria-selected={item.id === courseId} className={`topics-course${item.id === courseId ? ' is-active' : ''}`} onClick={() => chooseCourse(item.id)}>
+      {subjectCourses(subject).map(item => <button key={item.id} type="button" role="tab" aria-selected={item.id === courseId} className={`topics-course${item.id === courseId ? ' is-active' : ''}`} onClick={() => chooseCourse(item.id)}>
         <strong>{pickLang(item.name, language)}</strong><small>{pickLang(item.planName, language)}</small>
       </button>)}
     </div>
@@ -101,7 +111,7 @@ export default function TeacherCurriculum() {
           <ol className="plan-capacities">{unit.capacities.map((capacity, index) => <li key={`${capacity.n ?? 'g'}-${index}`}>
             <div className="plan-capacity-text">
               {capacity.n && <span className="topic-chip">{t('topics.capacity', { n: capacity.n })}</span>}
-              {capacity.prio !== null && <span className="topic-chip is-prio">{t('topics.prioBadge')} n.º {capacity.prio}</span>}
+              {capacity.prio !== null && <span className="topic-chip is-prio">{t('topics.prioBadge')} {prioLabel(capacity.prio)}</span>}
               <p>“{capacity.text}”</p>
             </div>
             <div className="plan-topic-list">{capacity.topics.map(topicChip)}</div>

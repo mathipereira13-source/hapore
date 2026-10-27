@@ -1,9 +1,12 @@
 // Preferencias y progreso del alumno en los temas (por cuenta, en el
 // dispositivo; storage.js ya separa los datos de cada perfil).
 import { readJSON, writeJSON } from '../utils/storage.js';
-import { COURSES } from './curriculum.js';
+import { COURSES, SUBJECTS } from './curriculum.js';
 
-const KEYS = { mine: 'pyfis:myTopics', course: 'pyfis:course', last: 'pyfis:lastTopic', teacher: 'pyfis:teacherTopics' };
+const KEYS = { mine: 'pyfis:myTopics', course: 'pyfis:course', last: 'pyfis:lastTopic', teacher: 'pyfis:teacherTopics', subject: 'pyfis:subject' };
+
+export const getSubject = () => { const value = readJSON(KEYS.subject, 'fisica'); return SUBJECTS.some(item => item.id === value) ? value : 'fisica'; };
+export const setSubject = subjectId => writeJSON(KEYS.subject, subjectId);
 
 export const getMyTopics = () => { const value = readJSON(KEYS.mine, []); return Array.isArray(value) ? value : []; };
 export function toggleMyTopic(topicId) {

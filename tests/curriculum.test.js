@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { TOPICS, topicById, courseTopics, topicCurriculum } from '../src/curriculum/topics/index.js';
-import { COURSES, GUIDE_SCHEDULES } from '../src/curriculum/curriculum.js';
+import { COURSES, GUIDE_SCHEDULES, subjectCourses, prioLabel } from '../src/curriculum/curriculum.js';
 import { SOURCES, NORMATIVE } from '../src/curriculum/sources.js';
 import { GENERATOR_IDS, generateExercise, checkAnswer, parseUserNumber, fmt } from '../src/curriculum/practice.js';
 
@@ -17,10 +17,31 @@ test('cada tema del currículo existe y cada tema está en algún curso', () => 
   for (const topic of TOPICS) assert.ok(topicCurriculum(topic.id).placements.length > 0, `${topic.id} no figura en ningún curso`);
 });
 
-test('solo Educación Media: cuatro cursos y ningún tercer ciclo', () => {
-  assert.deepEqual(COURSES.map(course => course.id), ['c1', 'c2', 'c3c', 'c3e']);
+test('solo Educación Media: cuatro cursos por materia y ningún tercer ciclo', () => {
+  assert.deepEqual(subjectCourses('fisica').map(course => course.id), ['c1', 'c2', 'c3c', 'c3e']);
+  assert.deepEqual(subjectCourses('matematica').map(course => course.id), ['m1', 'm2', 'm3', 'mpe']);
+  assert.equal(COURSES.length, 8);
   assert.ok(courseTopics('c1').length >= 15);
   assert.ok(courseTopics('c3e').some(topic => topic.id === 'movimiento-parabolico'));
+  for (const topic of TOPICS) {
+    const subjects = new Set(topicCurriculum(topic.id).placements.map(item => item.course.subject));
+    assert.deepEqual([...subjects], [topic.subject], `${topic.id}: aparece en cursos de otra materia`);
+  }
+});
+
+test('Matemática sigue el programa del MEC (Res. 12.506/09 BIS) con su priorización', () => {
+  const m1 = courseTopics('m1').map(topic => topic.id);
+  assert.deepEqual(m1, ['funciones', 'angulos', 'trigonometria', 'triangulos-oblicuangulos', 'geometria-analitica', 'recta', 'combinatoria']);
+  assert.ok(courseTopics('m3').some(topic => topic.id === 'derivadas'));
+  assert.equal(SOURCES.A.sections.matematica.includes('pp. 158-167'), true);
+  // Análisis combinatorio no está en la Priorización 2021; Lógica y Estadística se numeran aparte.
+  const capacities = id => COURSES.find(course => course.id === id).units.flatMap(unit => unit.capacities);
+  assert.ok(capacities('m1').filter(item => item.topics.includes('combinatoria')).every(item => item.prio === null));
+  assert.equal(prioLabel(7), 'n.º 7');
+  assert.equal(prioLabel('E3'), 'E3');
+  for (const topic of TOPICS.filter(item => item.subject === 'matematica')) {
+    assert.ok(topic.application?.es && topic.application?.gn, `${topic.id}: falta la aplicación`);
+  }
 });
 
 test('las fuentes citan la resolución del programa base sin inventar otras', () => {
@@ -68,6 +89,23 @@ test('la física de los generadores es correcta en casos conocidos', () => {
   assert.ok(Math.abs(carnot.answer - 50) < 1e-9);
   const ohm = find('ohm-parallel', ex => ex.prompt.es.includes('de 12 Ω y 4 Ω'));
   assert.equal(ohm.answer, 3);
+});
+
+test('la matemática de los generadores es correcta en casos conocidos', () => {
+  const find = (genId, predicate) => {
+    for (let seed = 1; seed < 800; seed += 1) { const ex = generateExercise(genId, seed); if (predicate(ex)) return ex; }
+    throw new Error(`sin caso para ${genId}`);
+  };
+  const interest = find('exp-compound', ex => /500\s000 Gs/.test(ex.prompt.es) && ex.prompt.es.includes('al 8 %') && ex.prompt.es.includes('de 3 años'));
+  assert.ok(Math.abs(interest.answer - 629856) < 1);
+  const committee = find('comb-comb', ex => ex.prompt.es.includes('curso de 25 ') && ex.prompt.es.includes('comisión de 3'));
+  assert.equal(committee.answer, 2300);
+  const roads = find('obl-cosine', ex => ex.prompt.es.includes('formando 60°') && ex.prompt.es.includes('mide 300 m y el otro 600 m'));
+  assert.ok(Math.abs(roads.answer - Math.sqrt(270000)) < 1e-9);
+  const rows = find('logic-rows', ex => ex.prompt.es.includes('de 3 sensores'));
+  assert.equal(rows.answer, 8);
+  const box = find('opt-box', ex => ex.prompt.es.includes('de 30 cm'));
+  assert.equal(box.answer, 2000);
 });
 
 test('lectura de números escritos por el alumno', () => {

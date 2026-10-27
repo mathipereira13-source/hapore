@@ -18,6 +18,8 @@ export const SOURCES = {
     sections: {
       comun: 'Física del Plan Común: pp. 139-145 (impresas = PDF).',
       especifico: 'Física del Plan Específico, énfasis en Ciencias Básicas: pp. 251-253; orientación pedagógica p. 268.',
+      matematica: 'Matemática del Plan Común (área Matemática y sus Tecnologías): pp. 158-167; orientaciones p. 168.',
+      logica: 'Lógica Matemática y Estadística del Plan Específico, énfasis en Ciencias Básicas: pp. 258-261.',
     },
   },
   B: {
@@ -32,6 +34,8 @@ export const SOURCES = {
     sections: {
       comun: 'Física del Plan Común (1° y 2° curso): pp. impresas 66-67 / PDF 74-75.',
       especifico: 'Física del Plan Específico, 3er curso: p. impresa 91 / PDF 99.',
+      matematica: 'Matemática del Plan Común (1°, 2° y 3er curso): pp. impresas 70-71 / PDF 78-79.',
+      logica: 'Plan Específico, Ciencias Básicas: Lógica Matemática (1er curso) p. impresa 94 / PDF 102; Estadística (2° curso) p. impresa 95 / PDF 103.',
       legal: 'Marco legal: pp. impresas 9-11 / PDF 17-19.',
     },
     note: 'El documento no muestra una resolución aprobatoria propia en las páginas analizadas: no se le atribuye ninguna.',
@@ -49,6 +53,8 @@ export const SOURCES = {
       comun2: 'Plan Común, Física 2° curso: pp. impresas 110-113 / PDF 120-123.',
       comun3: 'Plan Común, Física 3er curso: pp. impresas 114-117 / PDF 124-127.',
       especifico3: 'Plan Específico, Física 3er curso: pp. impresas 207-210 / PDF 217-220.',
+      matematica: 'Plan Común, Matemática 1°, 2° y 3er curso: pp. impresas 126-138 / PDF 136-148.',
+      logica: 'Plan Específico: Lógica Matemática 1er curso pp. impresas 217-220 / PDF 227-230; Estadística 2° curso pp. impresas 221-225 / PDF 231-235.',
     },
     note: 'No se le atribuye una resolución aprobatoria: no figura en las páginas revisadas.',
   },
@@ -77,6 +83,15 @@ export const NORMATIVE = [
 export const COMPETENCIES = {
   comun: { text: 'Resuelve situaciones problemáticas referidas a fenómenos del entorno que requieran de los principios y de las leyes de la Física.', source: 'A', pages: 'p. 139' },
   especifico: { text: 'Resuelve problemas que impliquen la comprensión de fenómenos físicos acontecidos en el ambiente.', source: 'A', pages: 'p. 251' },
+  matematica: { text: 'Formula y resuelve situaciones problemáticas que involucren la utilización de conceptos, operaciones, teoremas y propiedades matemáticas de la Trigonometría, la Geometría Analítica y el Cálculo, aplicadas a la modelización de situaciones de la vida real.', source: 'A', pages: 'p. 158' },
+  logica: { text: 'Aplica el razonamiento lógico en el proceso de elaboración de inferencias estadísticas y en la organización, explicación y resolución de problemas de la naturaleza, a partir de informaciones recopiladas del medio ambiente.', source: 'A', pages: 'p. 258' },
+};
+
+// Matemática: el programa nombra teoremas y procedimientos, pero (como en
+// Física) no transcribe las fórmulas; se usan las de los textos de nivel medio.
+export const MATH_FORMULA_NOTE = {
+  es: 'Fórmulas de matemática estándar (libros de texto de nivel medio). El programa del MEC nombra el tema y los teoremas, pero no transcribe fórmulas.',
+  gn: 'Fórmula matemática estándar-gua (libro de texto nivel medio). MEC programa ombohéra tema ha teorema, ndohaíri fórmula.',
 };
 
 // Aviso que acompaña a toda fórmula: los documentos del MEC nombran leyes y

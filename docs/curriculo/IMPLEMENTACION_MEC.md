@@ -7,6 +7,9 @@ de la Educación Escolar Básica queda fuera por decisión del equipo.
 
 Fuente del análisis: [`pyfis_especificacion_fisica_curriculo_paraguay.txt`](pyfis_especificacion_fisica_curriculo_paraguay.txt).
 
+**Matemática:** la investigación y la incorporación de Matemática aplicada
+(mismos documentos A, B y C) están en [MATEMATICA_MEC.md](MATEMATICA_MEC.md).
+
 ## Documentos usados
 
 | Doc. | Documento | Resolución | Uso en PyFis |

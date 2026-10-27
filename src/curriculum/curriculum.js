@@ -8,9 +8,17 @@
 // Los textos de capacidades se copian del documento fuente (sin tildes en el
 // original de la especificación; acá se restituyen para lectura).
 
+import { MATH_COURSES, MATH_GUIDE_SCHEDULES } from './mathCurriculum.js';
+
 export const LEVEL = { id: 'media', name: { es: 'Educación Media', gn: 'Educación Media' } };
 
-export const COURSES = [
+/** Materias de la app: cada curso pertenece a una (Física o Matemática). */
+export const SUBJECTS = [
+  { id: 'fisica', name: { es: 'Física', gn: 'Física' } },
+  { id: 'matematica', name: { es: 'Matemática', gn: 'Matemática' } },
+];
+
+const PHYSICS_COURSES = [
   {
     id: 'c1', grade: 1, plan: 'comun',
     name: { es: '1.er curso', gn: '1.er curso' },
@@ -173,10 +181,18 @@ export const COURSES = [
   },
 ];
 
+export const COURSES = [...PHYSICS_COURSES.map(course => ({ subject: 'fisica', ...course })), ...MATH_COURSES];
+export const subjectCourses = subjectId => COURSES.filter(course => course.subject === subjectId);
+
+/** "n.º 7" para la numeración de la Priorización 2021; "L1"/"E3" (Lógica y
+ * Estadística del Plan Específico, que se numeran aparte) quedan tal cual. */
+export const prioLabel = prio => (typeof prio === 'number' ? `n.º ${prio}` : String(prio ?? ''));
+
 // Cronogramas de la Guía de planificación 2021 (doc C). Fechas del calendario
 // lectivo 2021: históricas, se muestran como referencia de orden y ritmo.
 // kind: 'nivelacion' (A-F), 'capacidad' (1-22), 'etapa' (repaso/evaluación).
 export const GUIDE_SCHEDULES = {
+  ...MATH_GUIDE_SCHEDULES,
   c2: {
     label: { es: 'Guía 2021 · Plan Común, 2.º curso', gn: 'Guía 2021 · Plan Común, 2.º curso' },
     pages: 'pp. impresas 110-113 / PDF 120-123',

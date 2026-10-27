@@ -4,9 +4,11 @@ import { MECANICA } from './mecanica.js';
 import { FLUIDOS_CALOR } from './fluidosCalor.js';
 import { ONDAS_OPTICA } from './ondasOptica.js';
 import { ELECTRICIDAD } from './electricidad.js';
+import { MATEMATICA } from './matematica.js';
 import { COURSES, courseTopicIds, topicGuideWeeks, topicPlacements } from '../curriculum.js';
 
-export const TOPICS = [...MECANICA, ...FLUIDOS_CALOR, ...ONDAS_OPTICA, ...ELECTRICIDAD];
+const PHYSICS = [...MECANICA, ...FLUIDOS_CALOR, ...ONDAS_OPTICA, ...ELECTRICIDAD].map(topic => ({ subject: 'fisica', ...topic }));
+export const TOPICS = [...PHYSICS, ...MATEMATICA.map(topic => ({ subject: 'matematica', ...topic }))];
 const BY_ID = new Map(TOPICS.map(topic => [topic.id, topic]));
 
 export const AREAS = {
@@ -18,6 +20,13 @@ export const AREAS = {
   ondas: { es: 'Ondas', gn: 'Onda', color: 'sky' },
   electricidad: { es: 'Electricidad', gn: 'Electricidad', color: 'violet' },
   moderna: { es: 'Física moderna', gn: 'Física moderna', color: 'earth' },
+  funciones: { es: 'Funciones', gn: 'Función', color: 'blue' },
+  trigonometria: { es: 'Trigonometría', gn: 'Trigonometría', color: 'sun' },
+  geometria: { es: 'Geometría analítica', gn: 'Geometría analítica', color: 'green' },
+  algebra: { es: 'Álgebra', gn: 'Álgebra', color: 'violet' },
+  calculo: { es: 'Cálculo', gn: 'Cálculo', color: 'earth' },
+  estadistica: { es: 'Estadística', gn: 'Estadística', color: 'sky' },
+  logica: { es: 'Lógica', gn: 'Lógica', color: 'red' },
 };
 
 export const topicById = id => BY_ID.get(id) ?? null;
