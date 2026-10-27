@@ -15,9 +15,11 @@ const LENGTHS = [
   { exp: 7, es: 'El diámetro de la Tierra (≈ 12 742 km)', gn: 'Yvy diámetro (≈ 12 742 km)', unit: '10⁴ km' },
 ];
 
-export default function UnitsSim() {
+const pow10 = exp => `10${String(exp).replace('-', '⁻').replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d])} m`;
+
+export default function UnitsSim({ mode: initialMode = 'speed' }) {
   const tx = useTx();
-  const [mode, setMode] = useState('speed');
+  const [mode, setMode] = useState(initialMode === 'length' ? 'length' : 'speed');
   const [kmh, setKmh] = useState(72);
   const [exp, setExp] = useState(0);
   const ms = kmh / 3.6;
@@ -25,8 +27,15 @@ export default function UnitsSim() {
   const CX = 250, CY = 200, R = 150;
   const polar = (deg, r) => ({ x: CX + r * Math.sin((deg * Math.PI) / 180), y: CY - r * Math.cos((deg * Math.PI) / 180) });
   const item = LENGTHS.find(entry => entry.exp === exp) ?? LENGTHS[3];
+  const scene3d = {
+    kind: 'units', mode,
+    state: mode === 'speed'
+      ? { ms, speedText: `${num(kmh, 0)} km/h = ${num(ms)} m/s` }
+      : { steps: LENGTHS.map(entry => pow10(entry.exp)), index: LENGTHS.indexOf(item), title: tx(item.es, item.gn) },
+  };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Magnitudes y unidades', 'Magnitud ha unidad')}
     subtitle={mode === 'speed' ? tx('El mismo valor en dos unidades: para pasar de km/h a m/s se divide por 3,6.', 'Peteĩ valor mokõi unidad-pe: km/h guive m/s-pe oñedividi 3,6 rehe.') : tx('Cada escalón multiplica por 10: así funcionan los prefijos del Sistema Internacional.', 'Káda escalón omultiplica 10 rehe: péicha oiko Sistema Internacional prefijo.')}
     actions={<Choice options={[{ id: 'speed', label: tx('Velocidad', 'Velocidad') }, { id: 'length', label: tx('Longitud', 'Longitud') }]} value={mode} onChange={setMode} />}
@@ -37,7 +46,7 @@ export default function UnitsSim() {
       <Readouts items={[{ label: 'km/h', value: kmh, tone: 'blue' }, { label: 'm/s', value: ms, tone: 'red' }]} />
       <Verdict tone="info">{tx(`${num(kmh)} km/h ÷ 3,6 = ${num(ms)} m/s`, `${num(kmh)} km/h ÷ 3,6 = ${num(ms)} m/s`)}</Verdict>
     </> : <>
-      <Readouts items={[{ label: tx('Orden de magnitud', 'Orden de magnitud'), value: `10${String(exp).replace('-', '⁻').replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d])} m`, tone: 'blue' }, { label: tx('Unidad', 'Unidad'), value: item.unit, tone: 'green' }]} />
+      <Readouts items={[{ label: tx('Orden de magnitud', 'Orden de magnitud'), value: pow10(exp), tone: 'blue' }, { label: tx('Unidad', 'Unidad'), value: item.unit, tone: 'green' }]} />
       <Verdict tone="info">{tx(item.es, item.gn)}</Verdict>
     </>}
     footer={tx('Unidades fundamentales del SI: metro (m), kilogramo (kg), segundo (s), amperio (A), kelvin (K), mol y candela.', 'SI unidad fundamental: metro (m), kilogramo (kg), segundo (s), amperio (A), kelvin (K), mol ha candela.')}
@@ -56,7 +65,7 @@ export default function UnitsSim() {
     </Stage> : <Stage width={500} height={330} label={tx('Escalera de potencias de diez', 'Diez potencia escalera')}>
       {LENGTHS.map((entry, index) => { const y = 300 - index * 32; const active = entry.exp === exp; return <g key={entry.exp}>
         <rect x={40 + index * 10} y={y - 22} width={420 - index * 20} height="26" rx="6" fill={active ? '#dbe7fb' : '#fff'} stroke={active ? COLORS.blue : '#cbd5e1'} strokeWidth={active ? 2.4 : 1.2} />
-        <text x={52 + index * 10} y={y - 4} style={{ font: `${active ? 850 : 700} 12.5px system-ui`, fill: active ? COLORS.blue : '#334155' }}>10{String(entry.exp).replace('-', '⁻').replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d])} m</text>
+        <text x={52 + index * 10} y={y - 4} style={{ font: `${active ? 850 : 700} 12.5px system-ui`, fill: active ? COLORS.blue : '#334155' }}>{pow10(entry.exp)}</text>
         <text x={120 + index * 10} y={y - 4} style={{ font: '600 12px system-ui', fill: '#475569' }}>{tx(entry.es, entry.gn)}</text>
       </g>; })}
     </Stage>}

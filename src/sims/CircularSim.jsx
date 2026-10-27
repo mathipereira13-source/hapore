@@ -42,7 +42,15 @@ export default function CircularSim() {
     return `M${CX} ${CY} L${CX + radius * Math.cos(a0)} ${CY + radius * Math.sin(a0)} A${radius} ${radius} 0 0 1 ${CX + radius * Math.cos(a1)} ${CY + radius * Math.sin(a1)} Z`;
   };
 
+  // Mismo estado en metros para la vista 3D (z = −y del dibujo visto desde arriba).
+  const toMeters = p => ({ x: (p.x - CX) / PX_PER_M, z: (p.y - CY) / PX_PER_M });
+  const scene3d = {
+    kind: 'circular',
+    state: { r, rText: `${num(r)} m`, angle: a, v, ac, flying, ball: toMeters(ball), releasePoint: released !== null ? toMeters(pos(released)) : { x: 0, z: 0 }, tangent: { x: tangent.x, z: tangent.y } },
+  };
+
   return <Sim
+    scene3d={scene3d}
     title={tx('Movimiento circular uniforme', 'Movimiento circular uniforme')}
     subtitle={tx('La rapidez es constante, pero la dirección cambia todo el tiempo: por eso hay aceleración hacia el centro.', 'Rapidez constante, dirección katu okambia akóinte: upévare oĩ aceleración centro gotyo.')}
     controls={<>

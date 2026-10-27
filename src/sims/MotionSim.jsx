@@ -76,8 +76,19 @@ export default function MotionSim({ mode: initialMode = 'mru' }) {
   const change = setter => value => { setter(value); clock.reset(); };
   const changeMode = next => { setMode(next); if (next === 'compare') { setV(10); setAB(2); } clock.reset(); };
   const roadY = 168;
+  const scene3d = {
+    kind: 'motion', mode,
+    state: {
+      road: ROAD_M,
+      movers: states.map(state => ({ id: state.id, kind: state.kind, x: state.x, v: state.v, color: state.color })),
+      strobe: movers.map(mover => Array.from({ length: Math.floor(t) + 1 }, (_, second) => kinematics(mover.p, second).x)),
+      meetX: meet ? meet.x : null,
+      meetLabel: tx('encuentro', 'ñembojoja'),
+    },
+  };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Movimiento rectilíneo', 'Movimiento rectilíneo')}
     subtitle={mode === 'compare' ? tx('El colectivo va a velocidad constante; la moto arranca del reposo y acelera. ¿Dónde se encuentran?', 'Colectivo oho velocidad constante-pe; moto osẽ reposo-gui ha oacelera. ¿Moõpa ojotopa?') : tx('Mirá las marcas de cada segundo: iguales en MRU, cada vez más separadas en MRUV.', 'Ehecha káda segundo marca: peteĩcha MRU-pe, ojoavyvéva MRUV-pe.')}
     actions={<Choice options={[{ id: 'mru', label: 'MRU' }, { id: 'mruv', label: 'MRUV' }, { id: 'compare', label: tx('Encuentro', 'Ñembojoja') }]} value={mode} onChange={changeMode} />}

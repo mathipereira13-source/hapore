@@ -52,8 +52,13 @@ export default function CollisionSim() {
   const pBefore = m1 * v1 + m2 * v2, pAfter = m1 * result.u1 + m2 * result.u2;
   const kBefore = 0.5 * m1 * v1 * v1 + 0.5 * m2 * v2 * v2, kAfter = 0.5 * m1 * result.u1 ** 2 + 0.5 * m2 * result.u2 ** 2;
   const noHit = !Number.isFinite(result.tHit);
+  const scene3d = {
+    kind: 'collision',
+    state: { a: now.a, b: now.b, va: now.va, vb: now.vb, m1, m2, fmt: num, stuckText: now.hit && type === 'inelastic' ? tx('¡se pegaron!', '¡ojoaju!') : '' },
+  };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Choques y cantidad de movimiento', 'Choque ha cantidad de movimiento')}
     subtitle={tx('En todo choque sin fuerzas externas, la cantidad de movimiento total se conserva.', 'Opa choque-pe fuerza externa’ỹre, cantidad de movimiento total oñeñongatu.')}
     actions={<Choice options={[{ id: 'elastic', label: tx('Elástico (rebotan)', 'Elástico (opo jey)') }, { id: 'inelastic', label: tx('Inelástico (se pegan)', 'Inelástico (ojoaju)') }]} value={type} onChange={change(setType)} />}

@@ -32,8 +32,14 @@ export default function OrbitSim() {
     return `M${sun.x} ${sun.y} ` + pts.map(p => `L${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ') + ' Z';
   }), [e]); // eslint-disable-line react-hooks/exhaustive-deps
   const dir = { x: (sun.x - planet.x) / r, y: (sun.y - planet.y) / r };
+  const unit = M => { const E = solveKepler(M, e); return { cx: Math.cos(E), sy: Math.sin(E) }; };
+  const scene3d = {
+    kind: 'orbit',
+    state: { e, areas, planet: unit(M), posAt: unit, forceRel, speedRel, sunText: tx('Sol', 'Kuarahy'), emptyText: tx('foco vacío', 'foco nandi') },
+  };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Gravitación y leyes de Kepler', 'Gravitación ha Kepler ley-kuéra')}
     subtitle={tx('1.ª ley: órbita elíptica con el Sol en un foco. 2.ª ley: en tiempos iguales barre áreas iguales (cerca del Sol va más rápido).', '1.ª ley: órbita elíptica, Kuarahy peteĩ foco-pe. 2.ª ley: tiempo peteĩchagua-pe ombogue área peteĩchagua.')}
     controls={<>

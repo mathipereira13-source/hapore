@@ -93,3 +93,21 @@
 @media (prefers-reduced-motion: reduce) {
   .sim-toggle span, .sim-toggle span::after { transition: none; }
 }
+
+/* Vista 3D (three.js) */
+.sim-view-toggle { display: inline-flex; gap: 3px; padding: 3px; border-radius: 12px; background: #1b2a41; }
+.sim-view-toggle button { min-width: 44px; min-height: 32px; padding: 0 10px; border: 0; border-radius: 9px; background: transparent; color: #cbd5e1; font: inherit; font-size: 13px; font-weight: 900; letter-spacing: .5px; cursor: pointer; }
+.sim-view-toggle button.is-active { background: #fff; color: var(--sim-blue, #1d5bd8); }
+.sim3d { position: relative; width: 100%; min-height: 300px; overflow: hidden; border-radius: 16px; background: linear-gradient(180deg, #cfe9f6 0%, #e6f3fa 55%, #f6efdc 100%); touch-action: none; }
+.sim3d-canvas, .sim3d-labels { position: absolute; inset: 0; display: block; }
+.sim3d-labels { pointer-events: auto; cursor: grab; }
+.sim3d-labels:active { cursor: grabbing; }
+.sim3d-label { font-family: var(--font, system-ui, sans-serif); line-height: 1.1; white-space: nowrap; pointer-events: none; text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 4px #fff; }
+.sim3d.is-dark { background: #0f1a33; }
+.sim3d.is-dark .sim3d-label { text-shadow: 0 0 3px #0f1a33, 0 0 4px #0f1a33; }
+.sim3d-label.is-chip { padding: 2px 7px; border-radius: 999px; background: rgba(255,255,255,.88); text-shadow: none; box-shadow: 0 1px 3px rgba(15,23,42,.18); }
+.sim3d-reset { position: absolute; top: 10px; right: 10px; z-index: 3; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #cbd5e1; border-radius: 10px; background: rgba(255,255,255,.92); color: #1b2a41; cursor: pointer; }
+.sim3d-reset:hover { border-color: var(--sim-blue, #1d5bd8); color: var(--sim-blue, #1d5bd8); }
+.sim3d-hint { position: absolute; left: 10px; bottom: 8px; z-index: 3; margin: 0; padding: 4px 9px; border-radius: 999px; background: rgba(255,255,255,.88); color: #475569; font-size: 12px; font-weight: 700; pointer-events: none; }
+.sim3d-fallback, .sim3d-loading { display: grid; place-items: center; min-height: 300px; padding: 20px; border-radius: 16px; background: #f8fafc; color: #475569; font-weight: 700; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .sim3d-hint { display: none; } }

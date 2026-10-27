@@ -47,8 +47,13 @@ export default function FreeFallSim() {
 
   const towerTop = sy(h0);
   const ballX = 300;
+  const scene3d = {
+    kind: 'freefall', mode,
+    state: { mode, h0, y: now.y, v: now.v, hMax, hMaxText: `${num(hMax)} m`, scaleTop, strobe: strobe.map(item => item.y), featherY: air ? featherY(t) : null },
+  };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Movimiento vertical en el vacío', 'Movimiento vertical vacío-pe')}
     subtitle={tx('La gravedad cambia la velocidad 9,8 m/s cada segundo. Arriba, en la altura máxima, v = 0.', 'Gravedad omoambue velocidad 9,8 m/s káda segundo. Yvatevehápe, v = 0.')}
     actions={<Choice options={[{ id: 'up', label: tx('Tiro hacia arriba', 'Yvate gotyo') }, { id: 'drop', label: tx('Caída libre', 'Caída libre') }]} value={mode} onChange={change(setMode)} />}

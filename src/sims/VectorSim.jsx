@@ -20,8 +20,13 @@ export default function VectorSim() {
   const dot = A.x * B.x + A.y * B.y;
   const cross = A.x * B.y - A.y * B.x;
   const p = v => ({ x: CX + v.x * U, y: CY - v.y * U });
+  const scene3d = {
+    kind: 'vectors',
+    state: { A, B, R, cross, parallelogram, crossText: `A × B = ${num(cross)} ${tx('(eje z)', '(eje z)')}` },
+  };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Suma de vectores', 'Vector ñembojoapy')}
     subtitle={tx('Poné B a continuación de A (cola con punta): la resultante va del inicio de A a la punta de B.', 'Emoĩ B A rapykuéri (rugua apysa ndive): resultante oho A ñepyrũgui B apysa peve.')}
     controls={<>

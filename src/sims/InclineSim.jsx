@@ -22,7 +22,7 @@ function InclineScene({ theta, m, mu, t, showParts, tx }) {
   const center = { x: base.x + normal.x * size / 2, y: base.y + normal.y * size / 2 };
   const P = m * G, N = P * Math.cos(rad), fr = slides ? mu * N : P * Math.sin(rad);
   const k = 70 / Math.max(P, 1);
-  return { a, slides, P, N, fr, done: s >= SLOPE_M - 0.6, node: <>
+  return { a, slides, P, N, fr, s, done: s >= SLOPE_M - 0.6, node: <>
     <polygon points={`${A.x},${A.y} ${B.x},${B.y} ${A.x},${B.y}`} fill="#e9dcc4" stroke={INK} strokeWidth="2" />
     {Array.from({ length: 6 }, (_, i) => <line key={i} x1={A.x + (i / 5) * (B.x - A.x)} y1={B.y + 2} x2={A.x + (i / 5) * (B.x - A.x) - 10} y2={B.y + 12} stroke={INK} strokeWidth="1" opacity=".5" />)}
     <path d={`M${B.x - 46} ${B.y} A46 46 0 0 0 ${B.x - 46 * Math.cos(rad)} ${B.y - 46 * Math.sin(rad)}`} fill="none" stroke={INK} strokeWidth="1.4" />
@@ -50,7 +50,7 @@ function AtwoodScene({ m1, m2, t }) {
   const PX = 320, PY = 60, R = 30;
   const y1 = 190 + disp * pxPerM, y2 = 190 - disp * pxPerM;
   const box = (x, y, m, color) => { const s = 24 + m * 2.4; return <g><line x1={x} y1={PY} x2={x} y2={y - s / 2} stroke={INK} strokeWidth="2" /><rect x={x - s / 2} y={y - s / 2} width={s} height={s} rx="4" fill={color} stroke={INK} strokeWidth="2.2" /><text x={x} y={y + 5} textAnchor="middle" style={{ font: '800 12px system-ui', fill: INK }}>{m} kg</text></g>; };
-  return { a, T, done: Math.abs(disp) >= 1.6, node: <>
+  return { a, T, disp, done: Math.abs(disp) >= 1.6, node: <>
     <rect x={PX - 90} y="14" width="180" height="12" fill="#cbd5e1" stroke={INK} strokeWidth="1.5" />
     <line x1={PX} y1="26" x2={PX} y2={PY} stroke={INK} strokeWidth="3" />
     <circle cx={PX} cy={PY} r={R} fill="#fff" stroke={INK} strokeWidth="2.4" />
@@ -62,9 +62,9 @@ function AtwoodScene({ m1, m2, t }) {
   </> };
 }
 
-export default function InclineSim() {
+export default function InclineSim({ mode: initialMode = 'incline' }) {
   const tx = useTx();
-  const [mode, setMode] = useState('incline');
+  const [mode, setMode] = useState(initialMode === 'atwood' ? 'atwood' : 'incline');
   const [theta, setTheta] = useState(30);
   const [m, setM] = useState(5);
   const [mu, setMu] = useState(0.2);
@@ -75,8 +75,15 @@ export default function InclineSim() {
   const scene = mode === 'incline' ? InclineScene({ theta, m, mu, t: clock.time, showParts: parts, tx }) : AtwoodScene({ m1, m2, t: clock.time });
   useEffect(() => { if (scene.done && clock.running) clock.setRunning(false); }, [scene.done, clock]);
   const change = setter => value => { setter(value); clock.reset(); };
+  const scene3d = {
+    kind: 'incline', mode,
+    state: mode === 'incline'
+      ? { theta, m, s: scene.s, P: scene.P, N: scene.N, fr: scene.fr, slides: scene.slides, showParts: parts }
+      : { m1, m2, disp: scene.disp, T: scene.T, aText: `a = ${num(Math.abs(scene.a))} m/s²` },
+  };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Leyes de Newton', 'Newton ley-kuéra')}
     subtitle={mode === 'incline' ? tx('Diagrama de cuerpo libre: la fuerza neta a lo largo de la rampa produce la aceleración (F = m·a).', 'Diagrama cuerpo libre: fuerza neta rampa rupi ome’ẽ aceleración (F = m·a).') : tx('Máquina de Atwood: la masa más pesada baja y arrastra a la otra.', 'Atwood máquina: masa ipohýivéva oguejy ha ogueraha ambuéva.')}
     actions={<Choice options={[{ id: 'incline', label: tx('Plano inclinado', 'Plano inclinado') }, { id: 'atwood', label: tx('Polea (Atwood)', 'Polea (Atwood)') }]} value={mode} onChange={change(setMode)} />}

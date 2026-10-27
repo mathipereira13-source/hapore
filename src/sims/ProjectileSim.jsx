@@ -46,8 +46,20 @@ export default function ProjectileSim() {
   const change = setter => value => { setter(value); clock.reset(); };
   useEffect(() => { clock.reset(); }, [compare]); // eslint-disable-line react-hooks/exhaustive-deps
   const complementary = Math.abs(main.range - other.range) < 0.05 * main.range && h0 === 0;
+  const pathPoints = f => Array.from({ length: 61 }, (_, i) => { const p = f.at((i / 60) * f.T); return [p.x, p.y]; });
+  const scene3d = {
+    kind: 'projectile', mode: planet,
+    state: {
+      planet, compare, h0, v0, xSpan, ySpan, range: main.range, hMax: main.hMax, xAtMax: main.vx * Math.max(0, main.vy / g),
+      rangeText: `${num(main.range)} m`, hText: `H = ${num(main.hMax)} m`,
+      path: pathPoints(main), pathOther: compare ? pathPoints(other) : [],
+      now: { x: now.x, y: now.y, vx: main.vx, vy: now.vyNow }, nowOther: { x: nowOther.x, y: nowOther.y },
+      flying: t < main.T, strobe: strobe.map(p => [p.x, p.y]),
+    },
+  };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Movimiento parabólico', 'Movimiento parabólico')}
     subtitle={tx('Horizontal: MRU (vx no cambia). Vertical: MRUV (vy cambia por la gravedad).', 'Horizontal: MRU (vx ndokambiái). Vertical: MRUV (vy okambia gravedad rupi).')}
     actions={<Choice options={[{ id: 'tierra', label: tx('Tierra', 'Yvy') }, { id: 'luna', label: tx('Luna', 'Jasy') }, { id: 'marte', label: 'Marte' }]} value={planet} onChange={change(setPlanet)} />}

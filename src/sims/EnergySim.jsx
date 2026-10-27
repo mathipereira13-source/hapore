@@ -46,6 +46,10 @@ export default function EnergySim() {
   const Ep = m * G * trackY(s.x);
   const Ec = 0.5 * m * s.v * s.v;
   const E0 = m * G * h0;
+  const scene3d = {
+    kind: 'energy',
+    state: { x: s.x, v: s.v, x0, h0, Ep, Ec, heat: s.heat, E0, startText: tx('altura de salida', 'osẽhápe yvatekue'), heatText: tx('Calor', 'Calor'), totalText: `${tx('Total al inicio', 'Total ñepyrũme')}: ${num(E0)} J` },
+  };
   const W = 640, Hs = 330, L = 60, R = 580, BOTTOM = 290, TOP = 50;
   const sx = x => L + ((x + X_HALF) / (2 * X_HALF)) * (R - L);
   const sy = y => BOTTOM - (y / H_TRACK) * (BOTTOM - TOP);
@@ -60,6 +64,7 @@ export default function EnergySim() {
   };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Energía en la pista', 'Energía pista-pe')}
     subtitle={tx('Arriba tiene energía potencial; abajo, cinética. Sin rozamiento la suma (mecánica) no cambia.', 'Yvate oguereko energía potencial; yvýpe, cinética. Rozamiento’ỹre suma (mecánica) ndokambiái.')}
     controls={<>

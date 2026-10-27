@@ -36,8 +36,13 @@ export default function LeverSim() {
   const at = d => ({ x: CX + d * PX_PER_M * Math.cos(rad), y: CY + d * PX_PER_M * Math.sin(rad) });
   const p1 = at(-d1), p2 = at(d2);
   const balanceD2 = (m1 * d1) / m2;
+  const scene3d = {
+    kind: 'lever',
+    state: { angle, m1, m2, d1, d2, weights: [`${num(m1 * G)} N`, `${num(m2 * G)} N`], verdict: balanced ? tx('Equilibrio: ΣM = 0', 'Equilibrio: ΣM = 0') : `ΣM = ${num(net)} N·m` },
+  };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Equilibrio: el subibaja', 'Equilibrio: subibaja')}
     subtitle={tx('Gana el lado con más momento (fuerza × distancia al apoyo). Si los momentos son iguales, hay equilibrio.', 'Ipu’ãve momento hetavéva (fuerza × distancia apoyo-gui). Momento peteĩcháramo, oĩ equilibrio.')}
     controls={<>

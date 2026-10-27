@@ -1,9 +1,32 @@
 // Kit común de los simuladores de PyFis: escena, controles, lecturas y
 // gráficos con la misma estética (hoja cuadriculada, trazo de tinta, paleta
 // de la app). Cada simulador solo describe su física y su dibujo.
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { Component, Suspense, lazy, useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from '../i18n/LanguageProvider.jsx';
 import './sims.css';
+
+// Vista 3D (three.js): se descarga solo cuando el alumno la elige.
+const Scene3D = lazy(() => import('./three/Scene3D.jsx'));
+const VIEW_KEY = 'pyfis:simView';
+let webglCache = null;
+function hasWebGL() {
+  if (webglCache !== null) return webglCache;
+  try {
+    const canvas = document.createElement('canvas');
+    webglCache = Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'));
+  } catch { webglCache = false; }
+  return webglCache;
+}
+const readView = () => { try { return localStorage.getItem(VIEW_KEY) === '2d' ? '2d' : '3d'; } catch { return '3d'; } };
+const saveView = value => { try { localStorage.setItem(VIEW_KEY, value); } catch { /* sin almacenamiento */ } };
+
+/** Si la escena 3D falla, se ve un aviso en vez de romper el simulador. */
+class View3DBoundary extends Component {
+  constructor(props) { super(props); this.state = { failed: false }; }
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(error) { console.error('Vista 3D', error); }
+  render() { return this.state.failed ? <div className="sim3d-fallback" role="status">{this.props.message}</div> : this.props.children; }
+}
 
 export const INK = '#1b2a41';
 export const COLORS = {
@@ -76,17 +99,37 @@ export function Sub({ text }) {
   return <>{parts}</>;
 }
 
-export function Sim({ title, subtitle, children, controls, readouts, graphs, footer, actions, className = '' }) {
-  return <section className={`sim ${className}`} aria-label={title}>
+/**
+ * Marco común de un simulador. `scene3d = { kind, mode, state }` agrega la
+ * vista 3D (botones 2D / 3D): la escena 3D lee el mismo estado que el dibujo 2D.
+ */
+export function Sim({ title, subtitle, children, controls, readouts, graphs, footer, actions, className = '', scene3d }) {
+  const tx = useTx();
+  const can3d = Boolean(scene3d) && hasWebGL();
+  const [view, setView] = useState(() => (can3d ? readView() : '2d'));
+  const show3d = can3d && view === '3d';
+  const choose = value => { setView(value); saveView(value); };
+  return <section className={`sim ${className}${show3d ? ' is-3d' : ''}`} aria-label={title}>
     <header className="sim-head">
       <div className="sim-head-copy">
         <h3>{title}</h3>
         {subtitle && <p><Sub text={subtitle} /></p>}
       </div>
-      {actions && <div className="sim-head-actions">{actions}</div>}
+      {(actions || can3d) && <div className="sim-head-actions">
+        {can3d && <div className="sim-view-toggle" role="group" aria-label={tx('Vista', 'Jehecha')}>
+          {['2d', '3d'].map(id => <button key={id} type="button" aria-pressed={view === id} className={view === id ? 'is-active' : ''} onClick={() => choose(id)}>{id.toUpperCase()}</button>)}
+        </div>}
+        {actions}
+      </div>}
     </header>
     <div className="sim-body">
-      <div className="sim-stage">{children}</div>
+      <div className="sim-stage">{show3d
+        ? <View3DBoundary message={tx('No se pudo mostrar la vista 3D. Usá la vista 2D.', 'Ndaikatúi ojehechauka 3D. Eipuru 2D.')}>
+          <Suspense fallback={<div className="sim3d-loading">{tx('Cargando la vista 3D…', 'Ojehupi 3D…')}</div>}>
+            <Scene3D kind={scene3d.kind} mode={scene3d.mode ?? ''} state={scene3d.state} />
+          </Suspense>
+        </View3DBoundary>
+        : children}</div>
       {(controls || readouts) && <aside className="sim-panel">
         {controls && <div className="sim-controls">{controls}</div>}
         {readouts && <div className="sim-readouts">{readouts}</div>}

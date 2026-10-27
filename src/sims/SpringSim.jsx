@@ -38,8 +38,13 @@ export default function SpringSim() {
   const F = k * x / 100;
   const change = setter => value => { setter(value); clock.reset(); };
   const fMax = Math.max(k * 0.3, F * 1.2);
+  const scene3d = {
+    kind: 'spring',
+    state: { x, xMax: xEq + pull, m, mText: `${num(m)} kg`, F, naturalText: tx('largo natural', 'largo natural') },
+  };
 
   return <Sim
+    scene3d={scene3d}
     title={tx('Ley de Hooke', 'Ley de Hooke')}
     subtitle={tx('El resorte se estira en proporción a la fuerza: F = k·x. Tirá y soltalo para ver cómo oscila.', 'Resorte ojepyso fuerza ndive proporción-pe: F = k·x. Emosẽ ha eheja ehecha hag̃ua oñemomýi.')}
     controls={<>
