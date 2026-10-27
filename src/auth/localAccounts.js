@@ -303,6 +303,8 @@ export async function changePassword(accountId, { currentPassword, newPassword }
   const index = saved.findIndex(item => item.id === accountId);
   if (index === -1) throw new Error('ACCOUNT_NOT_FOUND');
   const account = { ...saved[index] };
+  // Cuentas públicas de la demo (ver demoAccounts.js): todos comparten la clave.
+  if (import.meta.env?.VITE_DEMO_MODE === 'true' && /^demo\.(profesor|alumno)$/.test(account.username)) throw new Error('Las cuentas de prueba de la demo no pueden cambiar su contraseña.');
   if (!account.salt || !account.passwordHash) throw new Error('PASSWORD_UNAVAILABLE');
   const candidate = await hashPassword(String(currentPassword ?? ''), account.salt, account.passwordHash);
   if (candidate !== account.passwordHash) throw new Error('PASSWORD_CURRENT_INVALID');

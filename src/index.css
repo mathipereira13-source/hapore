@@ -3042,3 +3042,14 @@ button, input, select, textarea { max-width: 100%; }
   .header-account { gap: 2px; }
   .header-account .pyfis-language-selector select { width: 76px; max-width: 76px; }
 }
+
+/* Botones de cuentas de prueba (solo en la demo, VITE_DEMO_MODE) */
+.auth-demo { display: grid; gap: 10px; margin: 0 0 18px; padding: 16px; border-radius: 18px; background: var(--brand-blue-soft); border: 1.5px dashed #bfd2fb; }
+.auth-demo > strong { font-size: 15px; color: var(--brand-blue-deep); }
+.auth-demo-btn { width: 100%; min-height: 56px; justify-content: flex-start; gap: 12px; font-size: 16.5px; color: #fff; }
+.auth-demo-btn span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: rgba(255, 255, 255, .2); font-size: 18px; }
+.auth-demo-btn.is-teacher { background: var(--brand-violet); box-shadow: 0 3px 0 var(--brand-violet-deep); }
+.auth-demo-btn.is-teacher:hover:not(:disabled) { background: var(--brand-violet-deep); }
+.auth-demo-btn.is-student { background: var(--brand-blue); box-shadow: 0 3px 0 var(--brand-blue-deep); }
+.auth-demo-btn.is-student:hover:not(:disabled) { background: var(--brand-blue-hover); }
+.auth-demo small { color: var(--text-secondary); font-size: 12.5px; }

@@ -44,7 +44,8 @@ ensureLatestVersion();
 // El APK (Capacitor) y la app instalada (PWA) abren directo la app.
 const standalone = window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
 const path = window.location.pathname.replace(/\/+$/, '') || '/';
-const showLanding = !native && !standalone && (path === '/' || path === '/index.html');
+// La demo de pruebas (VITE_DEMO_MODE) no tiene página publicitaria: abre la app.
+const showLanding = import.meta.env.VITE_DEMO_MODE !== 'true' && !native && !standalone && (path === '/' || path === '/index.html');
 // Dos funciones separadas: así Vite precarga el CSS correcto de cada una
 // (con un ternario dentro de un solo import() mezclaba las dependencias).
 const loadLanding = () => import('./landing/Landing.jsx');

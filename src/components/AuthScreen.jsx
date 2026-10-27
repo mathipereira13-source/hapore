@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { login, register } from '../auth/localAccounts.js';
+import { DEMO_MODE, demoLogin } from '../auth/demoAccounts.js';
 import { BrandMark, LaunchScene } from './Nanduti.jsx';
 import { isCloudConfigured } from '../cloud/cloudClient.js';
 import LanguageSelector from './LanguageSelector.jsx';
@@ -32,6 +33,13 @@ export default function AuthScreen({ onAuthenticated }) {
       setError(failure.message || 'default');
     } finally { setBusy(false); }
   };
+  const [demoError, setDemoError] = useState('');
+  const enterDemo = async demoRole => {
+    setBusy(true); setDemoError('');
+    try { onAuthenticated(await demoLogin(demoRole)); }
+    catch (failure) { setDemoError(failure.message || 'default'); }
+    finally { setBusy(false); }
+  };
   const errorText = error === 'default' ? t('auth.errDefault') : localizeError(language, error);
 
   return (
@@ -58,6 +66,13 @@ export default function AuthScreen({ onAuthenticated }) {
           </div>
         </section>
         <section className="auth-panel" aria-label={t('auth.panel')}>
+          {DEMO_MODE && <div className="auth-demo" role="group" aria-label={t('auth.demoTitle')}>
+            <strong>{t('auth.demoTitle')}</strong>
+            <button type="button" className="btn auth-demo-btn is-teacher" disabled={busy} onClick={() => enterDemo('maestro')}><span aria-hidden="true">▤</span>{t('auth.demoTeacher')}</button>
+            <button type="button" className="btn auth-demo-btn is-student" disabled={busy} onClick={() => enterDemo('alumno')}><span aria-hidden="true">✎</span>{t('auth.demoStudent')}</button>
+            <small>{t('auth.demoNote')}</small>
+            {demoError !== '' && <p className="auth-error" role="alert">{demoError === 'default' ? t('auth.errDefault') : localizeError(language, demoError)}</p>}
+          </div>}
           <div className="auth-tabs" role="tablist" aria-label={t('auth.tabs')}>
             <button id="tab-login" type="button" role="tab" aria-selected={mode === 'login'} aria-controls="auth-panel-body" className={mode === 'login' ? 'is-active' : ''} onClick={() => changeMode('login')}>{t('auth.login')}</button>
             <button id="tab-register" type="button" role="tab" aria-selected={mode === 'register'} aria-controls="auth-panel-body" className={mode === 'register' ? 'is-active' : ''} onClick={() => changeMode('register')}>{t('auth.register')}</button>

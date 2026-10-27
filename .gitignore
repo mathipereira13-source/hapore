@@ -24,3 +24,6 @@ apk/*
 # Informes de seguridad con detalles de vulnerabilidades: el repositorio es
 # público, así que se guardan solo en la computadora.
 /auditoria-privada/
+.vercel
+.env*
+supabase/.temp/

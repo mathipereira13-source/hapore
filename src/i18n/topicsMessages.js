@@ -100,6 +100,10 @@ export const TOPICS_MESSAGES = {
     'plan.inGroup': 'Plan MEC tema-kuéra oñemondótava grupo-pe: {n}. Emoambue “Plan MEC”-pe.',
     'teacher.tool.plan': 'Plan MEC',
     'teacher.tool.planText': 'Programa tema-kuéra ha simulador eproyecta hag̃ua.',
+    'auth.demoTitle': 'Eñeha’ã pya’e cuenta de prueba reheve',
+    'auth.demoTeacher': 'Eike demo mbo’ehára',
+    'auth.demoStudent': 'Eike demo temimbo’e',
+    'auth.demoNote': 'Cuenta pública: opavave oipuru, ha nde dato oñeñongatu.',
   },
   es: {
     'nav.simulador': 'Temas',
@@ -200,5 +204,9 @@ export const TOPICS_MESSAGES = {
     'plan.inGroup': 'Temas del Plan MEC que se envían al grupo: {n}. Los cambiás en “Plan MEC”.',
     'teacher.tool.plan': 'Plan MEC',
     'teacher.tool.planText': 'Temas del programa y simuladores para proyectar.',
+    'auth.demoTitle': 'Probá rápido con una cuenta de prueba',
+    'auth.demoTeacher': 'Iniciar sesión demo profesor',
+    'auth.demoStudent': 'Iniciar sesión demo alumno',
+    'auth.demoNote': 'Cuentas públicas: las comparte todo el que prueba la demo y guardan los datos.',
   },
 };

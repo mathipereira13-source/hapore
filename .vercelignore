@@ -1,0 +1,10 @@
+# Lo que nunca se sube al publicar con la CLI de Vercel (demo-pyfis).
+.env
+.env.*
+node_modules
+dist
+android
+apk
+branding
+_archivo
+.claude
